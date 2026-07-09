@@ -17,20 +17,18 @@ var getUrlParameter = function getUrlParameter(sPageURL) {
 };
 
 // Execute actions on images generated from Markdown pages
-document.addEventListener("DOMContentLoaded", function() {
-  var images = $("div#body-inner img").not(".inline");
-  // Wrap image inside a featherlight (to get a full size view in a popup)
-  images.wrap(function () {
-    var image = $(this);
-    var o = getUrlParameter(image[0].src);
-    var f = o ? o["featherlight"] : undefined;
-    // IF featherlight is false, do not use feather light
-    if (f != "false") {
-      if (!image.parent("a").length) {
-        return "<a href='" + image[0].src + "' data-featherlight='image'></a>";
-      }
+var images = $("div#body-inner img").not(".inline");
+// Wrap image inside a featherlight (to get a full size view in a popup)
+images.wrap(function () {
+  var image = $(this);
+  var o = getUrlParameter(image[0].src);
+  var f = o ? o["featherlight"] : undefined;
+  // IF featherlight is false, do not use feather light
+  if (f != "false") {
+    if (!image.parent("a").length) {
+      return "<a href='" + image[0].src + "' data-featherlight='image'></a>";
     }
-  });
+  }
 });
 
 // Change styles, depending on parameters set to the image

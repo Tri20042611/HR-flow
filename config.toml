@@ -1,5 +1,5 @@
 baseURL = "https://tri20042611.github.io/HR-flow/"
-relativeURLs = true
+relativeURLs = false
 canonifyURLs = false
 defaultContentLanguage = "en"
 

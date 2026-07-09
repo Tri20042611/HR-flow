@@ -6,120 +6,66 @@ chapter: false
 pre: " <b> 4.2. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
-
-# Bài thu hoạch “GenAI-powered App-DB Modernization workshop”
+# AWS Student Builder Group - Kiro Spec-Driven Development
 
 ### Mục Đích Của Sự Kiện
 
-- Chia sẻ best practices trong thiết kế ứng dụng hiện đại
-- Giới thiệu phương pháp DDD và event-driven architecture
-- Hướng dẫn lựa chọn compute services phù hợp
-- Giới thiệu công cụ AI hỗ trợ development lifecycle
+Buổi chia sẻ do **Danh Hoàng Hiếu Nghị** trình bày, tập trung vào cách Kiro hỗ trợ quy trình phát triển theo hướng spec-first, giúp cải thiện khả năng cộng tác trong team, đưa ra quyết định kiến trúc tốt hơn, và tận dụng AI hiệu quả hơn trong quá trình phát triển phần mềm. Thay vì chỉ để AI sinh code một cách rời rạc, Kiro giúp biến yêu cầu thành specification, thiết kế hệ thống và kế hoạch triển khai rõ ràng hơn, từ đó tạo ra code đáng tin cậy hơn.
 
-### Danh Sách Diễn Giả
+### Đối Tượng Tham Gia
 
-- **Jignesh Shah** - Director, Open Source Databases
-- **Erica Liu** - Sr. GTM Specialist, AppMod
-- **Fabrianne Effendi** - Assc. Specialist SA, Serverless Amazon Web Services
+Sự kiện phù hợp với sinh viên, software engineers, AI developers, cloud builders, và những bạn quan tâm đến các workflow phát triển phần mềm hiện đại.
 
-### Nội Dung Nổi Bật
+### Nội Dung Chính
 
-#### Đưa ra các ảnh hưởng tiêu cực của kiến trúc ứng dụng cũ
-
-- Thời gian release sản phẩm lâu → Mất doanh thu/bỏ lỡ cơ hội
-- Hoạt động kém hiệu quả → Mất năng suất, tốn kém chi phí
-- Không tuân thủ các quy định về bảo mật → Mất an ninh, uy tín
-
-#### Chuyển đổi sang kiến trúc ứng dụng mới - Microservice Architecture
-
-Chuyển đổi thành hệ thống modular – từng chức năng là một **dịch vụ độc lập** giao tiếp với nhau qua **sự kiện** với 3 trụ cột cốt lõi:
-
-- **Queue Management**: Xử lý tác vụ bất đồng bộ
-- **Caching Strategy:** Tối ưu performance
-- **Message Handling:** Giao tiếp linh hoạt giữa services
-
-#### Domain-Driven Design (DDD)
-
-- **Phương pháp 4 bước**: Xác định domain events → sắp xếp timeline → identify actors → xác định bounded contexts
-- **Case study bookstore**: Minh họa cách áp dụng DDD thực tế
-- **Context mapping**: 7 patterns tích hợp bounded contexts
-
-#### Event-Driven Architecture
-
-- **3 patterns tích hợp**: Publish/Subscribe, Point-to-point, Streaming
-- **Lợi ích**: Loose coupling, scalability, resilience
-- **So sánh sync vs async**: Hiểu rõ trade-offs (sự đánh đổi)
-
-#### Compute Evolution
-
-- **Shared Responsibility Model**: Từ EC2 → ECS → Fargate → Lambda
-- **Serverless benefits**: No server management, auto-scaling, pay-for-value
-- **Functions vs Containers**: Criteria lựa chọn phù hợp
-
-#### Amazon Q Developer
-
-- **SDLC automation**: Từ planning đến maintenance
-- **Code transformation**: Java upgrade, .NET modernization
-- **AWS Transform agents**: VMware, Mainframe, .NET migration
+- **Giới thiệu về Spec-Driven Development** và vì sao cách tiếp cận này ngày càng quan trọng
+- **Tổng quan về Kiro** và vai trò của Kiro trong AI-assisted software engineering
+- **Cách chuyển yêu cầu thành specification**, kiến trúc hệ thống và kế hoạch triển khai
+- **Vì sao workflow theo hướng specification-first** có thể cải thiện chất lượng phần mềm và khả năng cộng tác
+- **Thảo luận thực tế** về cách sử dụng AI coding assistant hiệu quả hơn
+- **Q&A và trao đổi** cùng cộng đồng
 
 ### Những Gì Học Được
 
-#### Tư Duy Thiết Kế
+#### Spec-Driven Development
 
-- **Business-first approach**: Luôn bắt đầu từ business domain, không phải technology
-- **Ubiquitous language**: Importance của common vocabulary giữa business và tech teams
-- **Bounded contexts**: Cách identify và manage complexity trong large systems
+- Tại sao cách tiếp cận spec-first ngày càng quan trọng trong phát triển phần mềm hiện đại
+- Biến yêu cầu nghiệp vụ thành specification rõ ràng, có thể verify được
+- Thiết kế hệ thống và kế hoạch triển khai trước khi viết code
 
-#### Kiến Trúc Kỹ Thuật
+#### Kiro trong AI-Assisted Software Engineering
 
-- **Event storming technique**: Phương pháp thực tế để mô hình hóa quy trình kinh doanh
-- Sử dụng **Event-driven communication** thay vì synchronous calls
-- **Integration patterns**: Hiểu khi nào dùng sync, async, pub/sub, streaming
-- **Compute spectrum**: Criteria chọn từ VM → containers → serverless
+- Steering Files, Hooks, MCP - các tính năng nổi bật của Kiro
+- Spec-driven workflow giúp team cộng tác hiệu quả hơn
+- Đưa ra quyết định kiến trúc tốt hơn với AI
 
-#### Chiến Lược Hiện Đại Hóa
+#### Sử Dụng AI Coding Assistant Hiệu Quả
 
-- **Phased approach**: Không rush, phải có roadmap rõ ràng
-- **7Rs framework**: Nhiều con đường khác nhau tùy thuộc vào đặc điểm của mỗi ứng dụng
-- **ROI measurement**: Cost reduction + business agility
+- Tránh vibe coding - hiểu rõ những gì AI tạo ra
+- Kết hợp AI với specification rõ ràng để đạt kết quả tốt nhất
+- Maintain code quality khi sử dụng AI generation
 
 ### Ứng Dụng Vào Công Việc
 
-- **Áp dụng DDD** cho project hiện tại: Event storming sessions với business team
-- **Refactor microservices**: Sử dụng bounded contexts để identify service boundaries
-- **Implement event-driven patterns**: Thay thế một số sync calls bằng async messaging
-- **Serverless adoption**: Pilot AWS Lambda cho một số use cases phù hợp
-- **Try Amazon Q Developer**: Integrate vào development workflow để boost productivity
+- Áp dụng spec-first approach cho các project cá nhân
+- Sử dụng Kiro hoặc công cụ tương tự để improve workflow
+- Viết specification trước khi code để reduce ambiguity
+- Tận dụng AI assistant một cách có trách nhiệm và hiệu quả
 
-### Trải nghiệm trong event
+### Trải Nghiệm Trong Event
 
-Tham gia workshop **“GenAI-powered App-DB Modernization”** là một trải nghiệm rất bổ ích, giúp tôi có cái nhìn toàn diện về cách hiện đại hóa ứng dụng và cơ sở dữ liệu bằng các phương pháp và công cụ hiện đại. Một số trải nghiệm nổi bật:
+Tham gia buổi chia sẻ **"Kiro Spec-Driven Development"** là trải nghiệm rất giá trị, giúp em hiểu rõ hơn về cách tiếp cận spec-first và cách Kiro hỗ trợ quy trình phát triển phần mềm hiện đại. Một số điểm nổi bật:
 
-#### Học hỏi từ các diễn giả có chuyên môn cao
-- Các diễn giả đến từ AWS và các tổ chức công nghệ lớn đã chia sẻ **best practices** trong thiết kế ứng dụng hiện đại.
-- Qua các case study thực tế, tôi hiểu rõ hơn cách áp dụng **Domain-Driven Design (DDD)** và **Event-Driven Architecture** vào các project lớn.
+- Hiểu được tầm quan trọng của việc viết specification trước khi code
+- Nắm được các tính năng của Kiro như Steering Files, Hooks, MCP
+- Học cách cộng tác với AI một cách hiệu quả, tránh phụ thuộc quá mức
+- Kết nối với cộng đồng AWS Student Builder
 
-#### Trải nghiệm kỹ thuật thực tế
-- Tham gia các phiên trình bày về **event storming** giúp tôi hình dung cách **mô hình hóa quy trình kinh doanh** thành các domain events.
-- Học cách **phân tách microservices** và xác định **bounded contexts** để quản lý sự phức tạp của hệ thống lớn.
-- Hiểu rõ trade-offs giữa **synchronous và asynchronous communication** cũng như các pattern tích hợp như **pub/sub, point-to-point, streaming**.
+### Một Số Hình Ảnh Khi Tham Gia Sự Kiện
 
-#### Ứng dụng công cụ hiện đại
-- Trực tiếp tìm hiểu về **Amazon Q Developer**, công cụ AI hỗ trợ SDLC từ lập kế hoạch đến maintenance.
-- Học cách **tự động hóa code transformation** và pilot serverless với **AWS Lambda**, từ đó nâng cao năng suất phát triển.
+![Event 2 Photo](/images/4-EventParticipated/4.2-Event2/event2_photo.png)
 
-#### Kết nối và trao đổi
-- Workshop tạo cơ hội trao đổi trực tiếp với các chuyên gia, đồng nghiệp và team business, giúp **nâng cao ngôn ngữ chung (ubiquitous language)** giữa business và tech.
-- Qua các ví dụ thực tế, tôi nhận ra tầm quan trọng của **business-first approach**, luôn bắt đầu từ nhu cầu kinh doanh thay vì chỉ tập trung vào công nghệ.
+### Kết Quả Đạt Được
 
-#### Bài học rút ra
-- Việc áp dụng DDD và event-driven patterns giúp giảm **coupling**, tăng **scalability** và **resilience** cho hệ thống.
-- Chiến lược hiện đại hóa cần **phased approach** và đo lường **ROI**, không nên vội vàng chuyển đổi toàn bộ hệ thống.
-- Các công cụ AI như Amazon Q Developer có thể **boost productivity** nếu được tích hợp vào workflow phát triển hiện tại.
+- Sau buổi học hôm ấy, em đã đưa Kiro vào học tập và sử dụng, viết 1 blog về Kiro tại blog 1
 
-#### Một số hình ảnh khi tham gia sự kiện
-* Thêm các hình ảnh của các bạn tại đây
-> Tổng thể, sự kiện không chỉ cung cấp kiến thức kỹ thuật mà còn giúp tôi thay đổi cách tư duy về thiết kế ứng dụng, hiện đại hóa hệ thống và phối hợp hiệu quả hơn giữa các team.

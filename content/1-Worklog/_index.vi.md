@@ -6,35 +6,28 @@ chapter: false
 pre: " <b> 1. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+### Chi tiết từng tuần
 
-**Trong trang này** bạn sẽ cần giới thiệu worklog của bạn **như thế nào**? Bạn hoàn thành chương trình trong vòng **bao nhiêu tuần**? Bạn **đã làm gì** trong các tuần đó?
+**Tuần 1:** [Làm quen với AWS — EC2, IAM, CLI, Budget alerts](1.1-Week1/)
 
+**Tuần 2:** [Deep dive EC2 & EBS, Session Manager, Linux cơ bản](1.2-Week2/)
 
-Thông thường và cũng là tiêu chuẩn, một worklog được thực hiện trong khoảng 3 tháng (trong suốt thời gian thực tập) với nội dung các tuần như sau:
+**Tuần 3:** [Amazon S3 — Versioning, Lifecycle, Replication, Block Public Access, pre-signed URL, SSE-KMS](1.3-Week3/)
 
-**Tuần 1:** [Làm quen với AWS và các dịch vụ cơ bản trong AWS](1.1-week1/)
+**Tuần 4:** [Amazon VPC — CIDR, public/private subnet, IGW, NAT, SG vs NACL, VPC Endpoint](1.4-Week4/)
 
-**Tuần 2:** [Làm công việc A...](1.2-week2/)
+**Tuần 5:** [RDS Multi-AZ + Read Replica và DynamoDB partition/sort key, GSI, Streams](1.5-Week5/)
 
-**Tuần 3:** [Làm công việc B...](1.3-week3/)
+**Tuần 6:** [IAM chuyên sâu — least privilege, MFA, IAM Role, Access Analyzer, Identity Center SSO](1.6-Week6/)
 
-**Tuần 4:** [Làm công việc C...](1.4-week4/)
+**Tuần 7:** [KMS, GuardDuty, Security Hub, WAF, CloudTrail, CloudWatch](1.7-Week7/)
 
-**Tuần 5:** [Làm công việc D...](1.5-week5/)
+**Tuần 8:** [Serverless với Lambda + API Gateway + DynamoDB và CloudFormation IaC](1.8-Week8/)
 
-**Tuần 6:** [Làm công việc E...](1.6-week6/)
+**Tuần 9:** [Kiro IDE hỗ trợ code AI, Amazon SQS + DLQ, chốt đồ án cuối HireFlow AI](1.9-Week9/)
 
-**Tuần 7:** [Làm công việc G...](1.7-week7/)
+**Tuần 10:** [Khởi động HireFlow AI với AWS SAM — 6 S3, 2 DDB, 2 SQS, Lambda file-validator + Textract OCR](1.10-Week10/)
 
-**Tuần 8:** [Làm công việc H...](1.8-week8/)
+**Tuần 11:** [Pipeline async OCR → LLM score → DynamoDB, gửi email xác nhận qua Amazon SES](1.11-Week11/)
 
-**Tuần 9:** [Làm công việc I...](1.9-week9/)
-
-**Tuần 10:** [Làm công việc L...](1.10-week10/)
-
-**Tuần 11:** [Làm công việc M...](1.11-week11/)
-
-**Tuần 12:** [Làm công việc N...](1.12-week12/)
+**Tuần 12:** [Hoàn thiện SPA frontend trên S3, demo end-to-end qua cloudflared tunnel, viết báo cáo worklog cuối](1.12-Week12/)

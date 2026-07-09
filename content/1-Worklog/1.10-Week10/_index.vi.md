@@ -1,59 +1,38 @@
 ---
 title: "Worklog Tuần 10"
-date: 2024-01-01
-weight: 2
+date: 2026-06-22
+weight: 10
 chapter: false
 pre: " <b> 1.10. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
-
 
 ### Mục tiêu tuần 10:
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+- Khởi tạo project **HireFlow AI — Serverless Recruitment Platform** với backend chạy trên AWS Lambda.
+- Tìm hiểu **AWS SAM (Serverless Application Model)** và dựng toàn bộ hạ tầng backend bằng template `template.yaml`.
+- Vận hành pipeline thử nghiệm: **Upload CV → validate → OCR → LLM score → DynamoDB + SES email**.
+
+> Tuần này có 4 buổi, bỏ Thứ 5. 2 buổi đầu làm quen SAM, 1 buổi migrate sang SAM, buổi cuối test end-to-end.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+| --- | --- | --- | --- | --- |
+| 2 | - Tổng quan **AWS SAM**: khác gì với CloudFormation thuần, cú pháp `template.yaml` <br> - Cài **SAM CLI**, chạy `sam init` chọn template Python 3.12 + Lambda <br> - Đọc `template.yaml` mặc định: `AWS::Serverless::Function`, `Events`, `Environment` <br> - Khởi tạo repo `hireflow-sam/` trên máy, cấu trúc thư mục `src/` cho 8 function sau này | 22/06/2026 | 22/06/2026 | <https://docs.aws.amazon.com/serverless-application-model/> |
+| 3 | - Học nâng cao: **Globals**, **Layers**, **API event**, **`sam local invoke/start-api`** <br> - Tìm hiểu **SAM parameter** để truyền secrets (LLM API key, SES sender) từ ngoài vào, không hardcode <br> - Dùng `sam local invoke` test thử 1 Lambda "Hello" trước khi viết logic chính <br> - Phân tích kiến trúc HireFlow (8 Lambda + 6 bucket + 2 DDB + SQS + SNS) để lên danh sách resource cho template | 23/06/2026 | 23/06/2026 | <https://docs.aws.amazon.com/serverless-application-model/> |
+| 4 | - Viết `template.yaml` cho backend HireFlow: khai báo **6 S3 bucket** (Quarantine, Clean, CV Files, OCR Results, Candidate frontend, HR frontend), **2 DynamoDB table** (`hireflow-jobs`, `hireflow-candidates`) kèm GSI cho SHA-256 dedup, **2 SQS** (`score-queue`, `save-queue`) có DLQ <br> - Khai báo **8 Lambda function**: `presign`, `file-validator`, `extract`, `extract-complete`, `score`, `save-notify`, `candidates`, `jd-management` <br> - Chạy `sam build && sam deploy --guided` deploy stack `hireflow-dev` lên account sandbox | 24/06/2026 | 24/06/2026 | <https://docs.aws.amazon.com/serverless-application-model/> |
+| 6 | - Viết Lambda **file-validator** đơn giản (MIME check, size check, SHA-256), bind vào event S3 của bucket Quarantine <br> - Viết Lambda **extract** gọi **Amazon Textract** `StartDocumentTextDetection` cho PDF/DOCX <br> - Test end-to-end 1 CV mẫu: upload → validate → OCR → check kết quả text trong S3 OCR Results <br> - Push code lên Git, ghi `README.md` về cấu trúc repo + cách deploy | 26/06/2026 | 26/06/2026 | <https://docs.aws.amazon.com/textract/> |
 
 ### Kết quả đạt được tuần 10:
 
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+- Khởi tạo thành công project **HireFlow AI** với repo `hireflow-sam/`, cấu trúc `src/` rõ ràng cho 8 Lambda function.
+- Deploy thành công stack SAM `hireflow-dev` gồm **6 bucket, 2 DDB table, 2 SQS + 2 DLQ** lên AWS account.
+- Viết được Lambda `file-validator` với MIME magic-byte check, size limit 5MB, SHA-256 dedup qua GSI.
+- Tích hợp **Amazon Textract** cho bước OCR CV, xác nhận chạy đúng với PDF mẫu.
+- Có pipeline chạy được từ Upload → Validate → Extract, lưu kết quả OCR vào S3.
 
-* Đã tạo và cấu hình AWS Free Tier account thành công.
+### Khó khăn và bài học:
 
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+- Lúc đầu gắn event S3 cho `file-validator` qua shorthand `Events` của SAM thì gặp **circular dependency** do bucket nằm cùng stack — phải tách trigger bằng Lambda Permission + EventBridge rule tạo thủ công sau khi stack deploy xong.
+- `sam local invoke` cần Docker chạy nền, lúc đầu máy chưa bật nên lệnh fail liên tục — bài học phải check Docker trước khi test local.
+- Textract `StartDocumentTextDetection` là **async**, không trả text ngay trong response; phải đợi SNS callback `JobStatus=SUCCEEDED` rồi mới gọi `GetDocumentTextDetection` mới có kết quả — phải thiết kế Lambda `extract-complete` riêng để xử lý callback.

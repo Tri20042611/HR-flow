@@ -1,55 +1,104 @@
 ---
-title : "Kiểm tra Interface Endpoint"
+title : "Validation & Analysis"
 date : 2024-01-01
-weight : 3
+weight : 6
 chapter : false
-pre : " <b> 5.4.3 </b> "
 ---
 
-#### Lấy regional DNS name (tên DNS khu vực) của S3 interface endpoint
-1. Trong Amazon VPC menu, chọn Endpoints.
+## 7. Validation & Analysis
 
-2. Click tên của endpoint chúng ta mới tạo ở mục 4.2: s3-interface-endpoint. Click details và lưu lại regional DNS name của endpoint (cái đầu tiên) vào text-editor của bạn để dùng ở các bước sau.
+### 7.1 End-to-end test
 
-![dns name](/images/5-Workshop/5.4-S3-onprem/dns.png)
+**Upload 1 CV thật và theo dõi pipeline:**
 
-#### Kết nối đến EC2 instance ở trong "VPC On-prem" (giả lập môi trường truyền thống)
+```bash
+# 1. Lấy presigned URL (hoặc upload trực tiếp nếu có frontend)
+# 2. Upload test CV lên Quarantine bucket
+aws s3 cp test-cv.pdf s3://hireflow-quarantine-<ACCOUNT_ID>/web/test-cv.pdf
 
-1. Đi đến **Session manager** bằng cách gõ "session manager" vào ô tìm kiếm
+# 3. Theo dõi Lambda FileValidator logs
+aws logs tail /aws/lambda/hireflow-file-validator --follow --format short
 
-2. Click **Start Session**, chọn EC2 instance có tên **Test-Interface-Endpoint**. EC2 instance này đang chạy trên "VPC On-prem" và sẽ được sử dụng để kiểm tra kết nối đến Amazon S3 thông qua Interface endpoint. Session Manager sẽ mở 1 browser tab mới với shell prompt: **sh-4.2 $**
+# 4. Kiểm tra file đã copy sang Clean bucket
+aws s3 ls s3://hireflow-clean-<ACCOUNT_ID>/
 
-![Start session](/images/5-Workshop/5.4-S3-onprem/start-session.png)
+# 5. Theo dõi Lambda Extract logs
+aws logs tail /aws/lambda/hireflow-extract --follow --format short
 
-3. Đi đến ssm-user's home directory với lệnh "cd ~"
+# 6. Kiểm tra OCR text đã lưu
+aws s3 ls s3://hireflow-clean-<ACCOUNT_ID>/ocr/
 
-4. Tạo 1 file tên testfile2.xyz
+# 7. Theo dõi Lambda Score logs
+aws logs tail /aws/lambda/hireflow-score --follow --format short
+
+# 8. Kiểm tra kết quả trong DynamoDB
+aws dynamodb scan \
+  --table-name hireflow-candidates \
+  --filter-expression "score_total > :zero" \
+  --expression-attribute-values '{"N": {"N": "0"}}' \
+  --output json
 ```
-fallocate -l 1G testfile2.xyz
+
+**Expected output sau khi pipeline chạy xong:**
+
+```json
+{
+  "candidate_id": "uuid-...",
+  "job_id": "job-001",
+  "score_total": 75.5,
+  "score_detail": {
+    "experience": 80.0,
+    "skills": 70.0,
+    "education": 85.0,
+    "soft_skill": 70.0
+  },
+  "summary": "Ứng viên có 5 năm kinh nghiệm backend, thành thạo Python và AWS. ...",
+  "flags": [],
+  "status": "reviewing",
+  "confidence": "high"
+}
 ```
 
-![user](/images/5-Workshop/5.4-S3-onprem/cli1.png)
+### 7.2 CloudWatch Metrics phân tích
 
-5. Copy file vào S3 bucket mình tạo ở section 4.2
+Kiểm tra pipeline performance:
+
+```bash
+# Lambda invocation count và error rate
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/Lambda \
+  --metric-name Invocations \
+  --dimensions Name=FunctionName,Value=hireflow-file-validator \
+  --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300 \
+  --statistics Sum
+
+# SQS queue depth (message chờ xử lý)
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/SQS \
+  --metric-name ApproximateNumberOfMessagesVisible \
+  --dimensions Name=QueueName,Value=hireflow-score-queue \
+  --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300 \
+  --statistics Average
 ```
-aws s3 cp --endpoint-url https://bucket.<Regional-DNS-Name> testfile2.xyz s3://<your-bucket-name>
-``` 
-+ Câu lệnh này yêu cầu thông số --endpoint-url, bởi vì bạn cần sử dụng DNS name chỉ định cho endpoint để truy cập vào S3 thông qua Interface endpoint.
-+ Không lấy ' * ' khi copy/paste tên DNS khu vực.
-+ Cung cấp tên S3 bucket của bạn
 
-![copy file](/images/5-Workshop/5.4-S3-onprem/cli2.png)
+### 7.3 DLQ inspection (dead-letter queue)
 
-Bây giờ tệp đã được thêm vào bộ chứa S3 của bạn. Hãy kiểm tra bộ chứa S3 của bạn trong bước tiếp theo.
+Kiểm tra nếu có message thất bại:
 
-#### Kiểm tra Object trong S3 bucket
+```bash
+# Số message trong DLQ
+aws sqs get-queue-attributes \
+  --queue-url https://sqs.ap-southeast-2.amazonaws.com/<ACCOUNT_ID>/hireflow-score-dlq \
+  --attribute-names ApproximateNumberOfMessages
 
-1. Đi đến S3 console
-2. Click Buckets
-3. Click tên bucket của bạn và bạn sẽ thấy testfile2.xyz đã được thêm vào s3 bucket của bạn
+# Đọc message từ DLQ để debug
+aws sqs receive-message \
+  --queue-url https://sqs.ap-southeast-2.amazonaws.com/<ACCOUNT_ID>/hireflow-score-dlq \
+  --max-number-of-messages 1
 
-![check bucket](/images/5-Workshop/5.4-S3-onprem/check-bucket.png)
-
-
-
-
+# CloudWatch alarm đã configured — HR sẽ nhận email nếu DLQ có message
+```

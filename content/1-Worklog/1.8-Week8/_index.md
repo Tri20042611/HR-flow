@@ -1,57 +1,38 @@
 ---
-title: "Week 8 Worklog"
-date: 2024-01-01
-weight: 1
+title: "Worklog Week 8"
+date: 2026-06-08
+weight: 8
 chapter: false
 pre: " <b> 1.8. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
+### Week 8 Goals:
 
-### Week 8 Objectives:
+- Deploy a **serverless** application with Lambda + API Gateway + DynamoDB and understand event-driven design.
+- Get familiar with **AWS CloudFormation**: write templates, deploy, update and roll back stacks.
+- Wrap up the entire 8-week foundation and outline the direction for the final project.
 
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+> Last week of the foundation phase. Only 3 working sessions because I spent the rest of the time preparing the project proposal and joining the wrap-up session with my mentor.
 
-### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
+### Tasks for this week:
 
+| Day | Task | Start date | End date | Reference |
+| --- | --- | --- | --- | --- |
+| 2 | - **AWS Lambda** overview: function, trigger, execution role, runtime <br> - Wrote a Python 3.12 Lambda function returning simple JSON <br> - Created a **REST API Gateway** pointing at the Lambda and tested with `curl` <br> - Connected Lambda to the **DynamoDB Streams** set up in week 5 to write every change into S3 | 08/06/2026 | 08/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - **AWS CloudFormation** overview: template, stack, resource, parameter, output <br> - Wrote a template deploying a 2-tier VPC (public + private subnets, IGW, route tables) <br> - Deployed the stack and verified the resources were created correctly <br> - Updated the stack (changed CIDR) and watched CloudFormation apply a change set | 10/06/2026 | 10/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - Wrote a CloudFormation template that deploys Lambda + API Gateway + DynamoDB following this week's serverless architecture <br> - Deleted the manually-created resources and re-deployed via stack to demonstrate reusability <br> - Deliberately introduced an error (S3 bucket name conflict) and watched CloudFormation **roll back** <br> - Wrap-up session with mentor and collected feedback for the final project | 12/06/2026 | 12/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
-### Week 8 Achievements:
+### Week 8 Outcomes:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+- Created and deployed Lambda functions; able to attach an **execution role** with least privilege.
+- Connected API Gateway + Lambda + DynamoDB into a complete **serverless REST API** and tested it via `curl`.
+- Reused **DynamoDB Streams** + Lambda + S3 from week 5 to build an event-driven pipeline.
+- Wrote a **CloudFormation** template to deploy a 2-tier VPC; understood stacks, parameters and outputs.
+- Observed CloudFormation **rollback** on failure, reinforcing why IaC is preferable to console clicking.
+- Completed the **8-week foundation phase** and ready for the final 4 weeks focused on the project.
 
-* Successfully created and configured an AWS Free Tier account.
+### Difficulties and lessons learned:
 
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+- Lambda execution role does not have CloudWatch Logs write permissions by default on a new account — I had to attach `AWSLambdaBasicExecutionRole` manually.
+- API Gateway needs a **deployed stage** to expose a URL — easy to forget because the console does not warn you.
+- CloudFormation rollback only applies if enabled in the stack option; otherwise already-created resources stay around and leave the stack in a half-broken state. I hit this and spent 30 minutes cleaning up manually.

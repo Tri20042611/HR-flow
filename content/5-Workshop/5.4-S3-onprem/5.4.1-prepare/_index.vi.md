@@ -1,58 +1,69 @@
 ---
-title : "Chuẩn bị tài nguyên"
+title : "Lambda Extract"
 date : 2024-01-01
-weight : 1
+weight : 4
 chapter : false
-pre : " <b> 5.4.1 </b> "
 ---
 
-Để chuẩn bị cho phần này của workshop, bạn sẽ cần phải:
-+ Triển khai CloudFormation stack
-+ Sửa đổi bảng định tuyến VPC.
+## 4. Lambda Extract — OCR với Amazon Textract
 
-Các thành phần này hoạt động cùng nhau để mô phỏng DNS forwarding và name resolution.
+Lambda được trigger bởi S3 notification mỗi khi file mới vào Clean bucket. Xử lý đồng bộ (synchronous): start Textract job → poll đến khi hoàn thành → lưu raw text → gửi SQS.
 
-#### Triển khai CloudFormation stack
+**Code — Textract async polling:**
 
-Mẫu CloudFormation sẽ tạo các dịch vụ bổ sung để hỗ trợ mô phỏng môi trường truyền thống:
-+ Một Route 53 Private Hosted Zone lưu trữ các bản ghi Bí danh (Alias records) cho điểm cuối PrivateLink S3
-+ Một Route 53 Inbound Resolver endpoint cho phép "VPC Cloud" giải quyết các yêu cầu resolve DNS gửi đến Private Hosted Zone
-+ Một Route 53 Outbound Resolver endpoint cho phép "VPC On-prem" chuyển tiếp các yêu cầu DNS cho S3 sang "VPC Cloud"
+```python
+# src/extract/app.py
 
-![route 53 diagram](/images/5-Workshop/5.4-S3-onprem/route53.png)
+TEXTRACT_MAX_POLLS = 60       # 60 × 5s = 5 phút timeout
+TEXTRACT_POLL_INTERVAL = 5    # giây
 
-1. Click link sau để mở [AWS CloudFormation console](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://s3.amazonaws.com/reinvent-endpoints-builders-session/R53CF.yaml&stackName=PLOnpremSetup). Mẫu yêu cầu sẽ được tải sẵn vào menu. Chấp nhận tất cả mặc định và nhấp vào Tạo stack.
+def _run_textract(bucket: str, key: str) -> str:
+    # Bước 1: Start async job
+    response = textract.start_document_text_detection(
+        DocumentLocation={'S3Object': {'Bucket': bucket, 'Name': key}}
+    )
+    job_id = response['JobId']
 
-![Create stack](/images/5-Workshop/5.4-S3-onprem/create-stack.png)
+    # Bước 2: Poll đến khi SUCCEEDED hoặc FAILED
+    for attempt in range(TEXTRACT_MAX_POLLS):
+        time.sleep(TEXTRACT_POLL_INTERVAL)
+        result = textract.get_document_text_detection(JobId=job_id)
+        status = result['JobStatus']
 
-![Button](/images/5-Workshop/5.4-S3-onprem/create-stack-button.png)
+        if status == 'SUCCEEDED':
+            return _extract_text_from_textract(job_id)
+        if status == 'FAILED':
+            raise RuntimeError(f'Textract FAILED: {result.get("StatusMessage")}')
 
-Có thể mất vài phút để triển khai stack hoàn tất. Bạn có thể tiếp tục với bước tiếp theo mà không cần đợi quá trình triển khai kết thúc.
+    raise TimeoutError(f'Textract timeout sau {TEXTRACT_MAX_POLLS * TEXTRACT_POLL_INTERVAL}s')
+```
 
-####  Cập nhật bảng định tuyến private on-premise 
+**Idempotency check — tránh xử lý trùng:**
 
-Workshop này sử dụng StrongSwan VPN chạy trên EC2 instance để mô phỏng khả năng kết nối giữa trung tâm dữ liệu truyền thống và môi trường cloud AWS. Hầu hết các thành phần bắt buộc đều được cung cấp trước khi bạn bắt đầu. Để hoàn tất cấu hình VPN, bạn sẽ sửa đổi bảng định tuyến "VPC on-prem" để hướng lưu lượng đến cloud đi qua StrongSwan VPN instance.
+```python
+# src/extract/app.py
 
-1. Mở Amazon EC2 console 
+def _process_file(clean_bucket: str, s3_key: str):
+    # Check NGAY LÚC ĐẦU — tránh duplicate khi Lambda tự trigger lại
+    existing = _check_already_processed(s3_key)
+    if existing:
+        print(f'[WARN] File đã xử lý — candidate_id: {existing}')
+        return
 
-2. Chọn instance tên infra-vpngw-test. Từ Details tab, copy Instance ID và paste vào text editor của bạn để sử dụng ở những bước tiếp theo
+    # ... tiếp tục xử lý bình thường
+```
 
-![ec2 id](/images/5-Workshop/5.4-S3-onprem/ec2-onprem-id.png)
+**Text length validation — phát hiện PDF scan chất lượng thấp:**
 
-3. Đi đến VPC menu bằng cách gõ "VPC" vào Search box
+```python
+MIN_TEXT_LENGTH = 200  # ký tự
 
-4. Click vào Route Tables, chọn RT Private On-prem route table, chọn Routes tab, và click Edit Routes.
-
-![rt](/images/5-Workshop/5.4-S3-onprem/rt.png)
-
-5. Click Add route.
-+ Destination: CIDR block của Cloud VPC
-+ Target: ID của infra-vpngw-test instance (bạn đã lưu lại ở bước trên)
-
-![add route](/images/5-Workshop/5.4-S3-onprem/add-route.png)
-
-6. Click Save changes
-
-
-
-
+if len(raw_text.strip()) < MIN_TEXT_LENGTH:
+    _update_candidate_status(candidate_id, 'extraction_failed')
+    _send_hr_alert(
+        subject='[HireFlow] CV không đọc được nội dung',
+        message=f'Textract trích xuất < {MIN_TEXT_LENGTH} ký tự. '
+                f'Có thể là PDF scan chất lượng thấp.'
+    )
+    return
+```

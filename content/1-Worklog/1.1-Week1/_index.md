@@ -1,57 +1,46 @@
 ---
-title: "Week 1 Worklog"
-date: 2024-01-01
+title: "Worklog Week 1"
+date: 2026-04-20
 weight: 1
 chapter: false
 pre: " <b> 1.1. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
+### Week 1 Goals:
 
-### Week 1 Objectives:
+- Get to know members, mentors and the rules of the First Cloud AI Journey program.
+- Understand AWS overview and main service groups (Compute, Storage, Networking, Database, Security).
+- Create an AWS Free Tier account, get familiar with AWS Management Console, and install AWS CLI.
 
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+> The first week schedule was light. I only had 3 real working sessions on Monday, Wednesday and Friday. The other days were spent reading docs at home and handling personal stuff.
 
-### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
+### Tasks done this week:
 
+| Session | Date | Task | Reference |
+| --- | --- | --- | --- |
+| Session 1 | 20/04/2026 | Kick-off: <br> - Introduced myself to the team, got assigned a mentor <br> - Signed the NDA and reviewed internship regulations <br> - Got the 12-week roadmap overview | |
+| Session 2 | 22/04/2026 | Hands-on with AWS: <br> - Created AWS Free Tier account, enabled MFA on root <br> - Created a dedicated IAM user instead of using root for daily work <br> - Installed AWS CLI v2, ran `aws configure` with region `ap-southeast-1` <br> - Verified with `aws sts get-caller-identity` | <https://cloudjourney.awsstudygroup.com/> |
+| Session 3 | 24/04/2026 | First EC2: <br> - EC2 basics: instance type (`t2.micro`), AMI (Ubuntu 22.04), 8GB default EBS <br> - Created a `.pem` key pair, chmod 400 on Linux <br> - Configured Security Group to open port 22 only from my personal IP <br> - SSH-ed in successfully and installed Nginx <br> - Set a Budget alert at 1 USD to prevent unexpected charges | <https://cloudjourney.awsstudygroup.com/> |
 
-### Week 1 Achievements:
+### Week 1 Outcomes:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+- Understood what AWS is and its core service groups:
+  - Compute (EC2, Lambda)
+  - Storage (S3, EBS)
+  - Networking (VPC, Route 53)
+  - Database (RDS, DynamoDB)
+  - Security (IAM, KMS, GuardDuty)
 
-* Successfully created and configured an AWS Free Tier account.
+- Created and configured AWS Free Tier account with a dedicated IAM user for daily operations.
 
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
+- Installed and configured AWS CLI, verified identity with `aws sts get-caller-identity`.
 
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
+- Launched the first EC2, SSH-ed in with key pair, and ran Nginx.
 
-* Used AWS CLI to perform basic operations such as:
+- Learned how to control cost with Budget alerts and clean up resources after practice.
 
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
+### Difficulties and lessons learned:
 
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+- At first I was confused about root vs IAM users. After reading docs I understood: root is for account management only, every operational action should go through an IAM user for traceability.
+- I initially opened port 22 to `0.0.0.0/0` on the Security Group, then realized how dangerous that was with SSH-scanning bots. Locked it down to my IP only.
+- Reading AWS English docs is still slow because I have to translate along the way.

@@ -1,57 +1,69 @@
 ---
-title : "Prepare the environment"
+title : "Lambda Extract"
 date : 2024-01-01
-weight : 1
+weight : 4
 chapter : false
-pre : " <b> 5.4.1 </b> "
 ---
 
-To prepare for this part of the workshop you will need to:
-+ Deploying a CloudFormation stack 
-+ Modifying a VPC route table. 
+## 4. Lambda Extract — OCR with Amazon Textract
 
-These components work together to simulate on-premises DNS forwarding and name resolution.
+Lambda is triggered by S3 notification each time a file lands in Clean bucket. Synchronous processing: start Textract job → poll until complete → save raw text → send SQS.
 
-#### Deploy the CloudFormation stack
+**Code — Textract async polling:**
 
-The CloudFormation template will create additional services to support an on-premises simulation:
-+ One Route 53 Private Hosted Zone that hosts Alias records for the PrivateLink S3 endpoint
-+ One Route 53 Inbound Resolver endpoint that enables "VPC Cloud" to resolve inbound DNS resolution requests to the Private Hosted Zone
-+ One Route 53 Outbound Resolver endpoint that enables "VPC On-prem" to forward DNS requests for S3 to "VPC Cloud"
+```python
+# src/extract/app.py
 
-![route 53 diagram](/images/5-Workshop/5.4-S3-onprem/route53.png)
+TEXTRACT_MAX_POLLS = 60       # 60 × 5s = 5 minutes timeout
+TEXTRACT_POLL_INTERVAL = 5    # seconds
 
-1. Click the following link to open the [AWS CloudFormation console](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://s3.amazonaws.com/reinvent-endpoints-builders-session/R53CF.yaml&stackName=PLOnpremSetup). The required template will be pre-loaded into the menu. Accept all default and click Create stack.
+def _run_textract(bucket: str, key: str) -> str:
+    # Step 1: Start async job
+    response = textract.start_document_text_detection(
+        DocumentLocation={'S3Object': {'Bucket': bucket, 'Name': key}}
+    )
+    job_id = response['JobId']
 
-![Create stack](/images/5-Workshop/5.4-S3-onprem/create-stack.png)
+    # Step 2: Poll until SUCCEEDED or FAILED
+    for attempt in range(TEXTRACT_MAX_POLLS):
+        time.sleep(TEXTRACT_POLL_INTERVAL)
+        result = textract.get_document_text_detection(JobId=job_id)
+        status = result['JobStatus']
 
-![Button](/images/5-Workshop/5.4-S3-onprem/create-stack-button.png)
+        if status == 'SUCCEEDED':
+            return _extract_text_from_textract(job_id)
+        if status == 'FAILED':
+            raise RuntimeError(f'Textract FAILED: {result.get("StatusMessage")}')
 
-It may take a few minutes for stack deployment to complete. You can continue with the next step without waiting for the deployemnt to finish.
+    raise TimeoutError(f'Textract timeout after {TEXTRACT_MAX_POLLS * TEXTRACT_POLL_INTERVAL}s')
+```
 
-#### Update on-premise private route table
+**Idempotency check — avoid duplicate processing:**
 
-This workshop uses a strongSwan VPN running on an EC2 instance to simulate connectivty between an on-premises datacenter and the AWS cloud. Most of the required components are provisioned before your start. To finalize the VPN configuration, you will modify the "VPC On-prem" routing table to direct traffic destined for the cloud to the strongSwan VPN instance.
+```python
+# src/extract/app.py
 
-1. Open the Amazon EC2 console 
+def _process_file(clean_bucket: str, s3_key: str):
+    # Check RIGHT AWAY — avoid duplicate when Lambda re-triggers
+    existing = _check_already_processed(s3_key)
+    if existing:
+        print(f'[WARN] File already processed — candidate_id: {existing}')
+        return
 
-2. Select the instance named infra-vpngw-test. From the Details tab, copy the Instance ID and paste this into your text editor
+    # ... continue normal processing
+```
 
-![ec2 id](/images/5-Workshop/5.4-S3-onprem/ec2-onprem-id.png)
+**Text length validation — detect low-quality scanned PDF:**
 
-3. Navigate to the VPC menu by using the Search box at the top of the browser window.
+```python
+MIN_TEXT_LENGTH = 200  # characters
 
-4. Click on Route Tables, select the RT Private On-prem route table, select the Routes tab, and click Edit Routes.
-
-![rt](/images/5-Workshop/5.4-S3-onprem/rt.png)
-
-5. Click Add route.
-+ Destination: your Cloud VPC cidr range
-+ Target: ID of your infra-vpngw-test instance (you saved in your editor at step 1)
-
-![add route](/images/5-Workshop/5.4-S3-onprem/add-route.png)
-
-6. Click Save changes
-
-
-
+if len(raw_text.strip()) < MIN_TEXT_LENGTH:
+    _update_candidate_status(candidate_id, 'extraction_failed')
+    _send_hr_alert(
+        subject='[HireFlow] CV content unreadable',
+        message=f'Textract extracted < {MIN_TEXT_LENGTH} characters. '
+                f'Possibly a low-quality scanned PDF.'
+    )
+    return
+```

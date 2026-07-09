@@ -6,17 +6,13 @@ chapter: false
 pre: " <b> 3. </b> "
 ---
 
-{{% notice warning %}}  
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+Tại đây sẽ là phần liệt kê, giới thiệu các blogs mà các bạn đã đăng trên [AWS Study Group](https://www.facebook.com/groups/awsstudygroupfcj).
 
-Tại đây sẽ là phần liệt kê, giới thiệu các blogs mà các bạn đã đăng trên [AWS Study Group](https://www.facebook.com/groups/awsstudygroupfcj). Ví dụ:
+### [Blog 1 - Mình vừa nghịch Kiro được 2 tuần – kể bạn nghe cho vui](3.1-Blog1/)
+Blog chia sẻ trải nghiệm thực tế khi dùng Kiro — AI code editor do AWS phát triển với workflow spec-driven. Tác giả kể về quy trình làm việc, các tính năng nổi bật như Steering Files, Hooks, MCP, cùng ưu/nhược điểm sau 2 tuần sử dụng hằng ngày. Có kể lại duyên quen Kiro qua một buổi tối thứ 7.
 
-###  [Blog 1 - SESSION POLICIES TRONG AMAZON EKS POD IDENTITY](3.1-Blog1/)
-Blog này giới thiệu Amazon EKS Pod Identity vừa bổ sung tính năng session policies, cho phép bạn thu hẹp quyền IAM một cách linh hoạt và chính xác cho từng pod mà không cần tạo thêm nhiều IAM roles riêng biệt. Đây là bước tiến quan trọng giúp áp dụng nguyên tắc least privilege hiệu quả hơn trong môi trường Kubernetes quy mô lớn.
+### [Blog 2 - SAM – Giúp mình deploy AWS mà không phải click chuột](3.2-Blog2/)
+Blog kể về trải nghiệm sử dụng AWS SAM (Serverless Application Model) để deploy hạ tầng serverless thay vì click từng bước trên Console. Tác giả chia sẻ workflow với `template.yaml`, `sam build`, `sam deploy`, cùng những "đau đầu" đã gặp như Circular Dependency và bài học về Vibe Coding.
 
-###  [Blog 2 - ...](3.2-Blog2/)
-Blog này giới thiệu Amazon EKS Pod Identity vừa bổ sung tính năng session policies, cho phép bạn thu hẹp quyền IAM một cách linh hoạt và chính xác cho từng pod mà không cần tạo thêm nhiều IAM roles riêng biệt. Đây là bước tiến quan trọng giúp áp dụng nguyên tắc least privilege hiệu quả hơn trong môi trường Kubernetes quy mô lớn.
-
-###  [Blog 3 - ...](3.3-Blog3/)
-Blog này giới thiệu Amazon EKS Pod Identity vừa bổ sung tính năng session policies, cho phép bạn thu hẹp quyền IAM một cách linh hoạt và chính xác cho từng pod mà không cần tạo thêm nhiều IAM roles riêng biệt. Đây là bước tiến quan trọng giúp áp dụng nguyên tắc least privilege hiệu quả hơn trong môi trường Kubernetes quy mô lớn.
+### [Blog 3 - Tự động hóa trích xuất và phân tích Audit Log PostgreSQL với Amazon S3](3.3-Blog3/)
+Blog giới thiệu giải pháp tự động hóa pipeline xử lý audit log cho Amazon RDS PostgreSQL bằng pgAudit, CloudWatch Logs subscription filter, Lambda và S3. Log được parse thành CSV có cấu trúc, có thể query bằng Athena, kèm theo phân tích chi phí và lưu ý bảo mật.

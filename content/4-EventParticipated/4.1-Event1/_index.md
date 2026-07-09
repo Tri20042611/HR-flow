@@ -1,126 +1,69 @@
 ---
 title: "Event 1"
-date: 2024-01-01
+date: 2024-05-30
 weight: 1
 chapter: false
 pre: " <b> 4.1. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy it verbatim** into your report, including this warning.
-{{% /notice %}}
+# AWS First Cloud AI Journey Community Day – 30/5
 
-# Summary Report: “GenAI-powered App-DB Modernization workshop”
+---
 
-### Event Objectives
+## Event Objectives
 
-- Share best practices in modern application design
-- Introduce Domain-Driven Design (DDD) and event-driven architecture
-- Provide guidance on selecting the right compute services
-- Present AI tools to support the development lifecycle
+- Share stories to build self-confidence and overcome procrastination
+- Introduce the hackathon competition
+- Icebergs encountered when working on projects
+- Introduce the "coi que vận" (fate-reading) product
 
-### Speakers
+---
 
-- **Jignesh Shah** – Director, Open Source Databases
-- **Erica Liu** – Sr. GTM Specialist, AppMod
-- **Fabrianne Effendi** – Assc. Specialist SA, Serverless Amazon Web Services
+## Speaker List
 
-### Key Highlights
+I sincerely apologize for not paying close enough attention to note down the names of the speakers that day.
 
-#### Identifying the drawbacks of legacy application architecture
+---
 
-- Long product release cycles → Lost revenue/missed opportunities  
-- Inefficient operations → Reduced productivity, higher costs  
-- Non-compliance with security regulations → Security breaches, loss of reputation  
+## Key Highlights
 
-#### Transitioning to modern application architecture – Microservices
+### FPT Team – Hackathon
 
-Migrating to a modular system — each function is an **independent service** communicating via **events**, built on three core pillars:
+I was most impressed by the FPT team, who brought a different kind of energy with their English presentation. It made me much more excited about hackathon competitions.
 
-- **Queue Management**: Handle asynchronous tasks  
-- **Caching Strategy**: Optimize performance  
-- **Message Handling**: Flexible inter-service communication  
+- The team shared that they built their product in just 2–3 days
+- Bragged about the amount of tokens burned
+- Sleepless nights
+- Pride in the product they built
 
-#### Domain-Driven Design (DDD)
+**Lesson learned:** You should try joining a hackathon at least once.
 
-- **Four-step method**: Identify domain events → arrange timeline → identify actors → define bounded contexts  
-- **Bookstore case study**: Demonstrates real-world DDD application  
-- **Context mapping**: 7 patterns for integrating bounded contexts  
+### Two Speakers from HUTECH – Topics: Don't Procrastinate & Self-Confidence
 
-#### Event-Driven Architecture
+What impressed me was that they were still nervous but very brave to stand up and share their perspectives, knowledge, and viewpoints on various issues.
 
-- **3 integration patterns**: Publish/Subscribe, Point-to-point, Streaming  
-- **Benefits**: Loose coupling, scalability, resilience  
-- **Sync vs async comparison**: Understanding the trade-offs  
+**Lessons learned:**
+- Be strict with yourself through discipline to prevent procrastination
+- Build inner strength so you don't have to be afraid or insecure
 
-#### Compute Evolution
+### Icebergs When Working on Projects
 
-- **Shared Responsibility Model**: EC2 → ECS → Fargate → Lambda  
-- **Serverless benefits**: No server management, auto-scaling, pay-for-value  
-- **Functions vs Containers**: Criteria for appropriate choice  
+I was impressed by:
 
-#### Amazon Q Developer
+- The speaker's multidimensional perspective and stories from building products
+- How they approached problem-solving
+- How they set vision, divide work, and manage the team
 
-- **SDLC automation**: From planning to maintenance  
-- **Code transformation**: Java upgrade, .NET modernization  
-- **AWS Transform agents**: VMware, Mainframe, .NET migration  
+**Lessons learned:**
+- Gain lots of experience and knowledge managing a team running a project
+- Always have a contingency plan for risks
 
-### Key Takeaways
+### Introducing the "Quẻ Vận" (Fate Divination) Product
 
-#### Design Mindset
+A fun and interesting product.
 
-- **Business-first approach**: Always start from the business domain, not the technology  
-- **Ubiquitous language**: Importance of a shared vocabulary between business and tech teams  
-- **Bounded contexts**: Identifying and managing complexity in large systems  
+- I shared some business perspectives on the risks of running this product with the product owner and got answers from him
+- The product calls external AI and has validation from industry experts
+- Includes vouchers
 
-#### Technical Architecture
-
-- **Event storming technique**: Practical method for modeling business processes  
-- Use **event-driven communication** instead of synchronous calls  
-- **Integration patterns**: When to use sync, async, pub/sub, streaming  
-- **Compute spectrum**: Criteria for choosing between VM, containers, and serverless  
-
-#### Modernization Strategy
-
-- **Phased approach**: No rushing — follow a clear roadmap  
-- **7Rs framework**: Multiple modernization paths depending on the application  
-- **ROI measurement**: Cost reduction + business agility  
-
-### Applying to Work
-
-- **Apply DDD** to current projects: Event storming sessions with business teams  
-- **Refactor microservices**: Use bounded contexts to define service boundaries  
-- **Implement event-driven patterns**: Replace some sync calls with async messaging  
-- **Adopt serverless**: Pilot AWS Lambda for suitable use cases  
-- **Try Amazon Q Developer**: Integrate into the dev workflow to boost productivity  
-
-### Event Experience
-
-Attending the **“GenAI-powered App-DB Modernization”** workshop was extremely valuable, giving me a comprehensive view of modernizing applications and databases using advanced methods and tools. Key experiences included:
-
-#### Learning from highly skilled speakers
-- Experts from AWS and major tech organizations shared **best practices** in modern application design.  
-- Through real-world case studies, I gained a deeper understanding of applying **DDD** and **Event-Driven Architecture** to large projects.  
-
-#### Hands-on technical exposure
-- Participating in **event storming** sessions helped me visualize how to **model business processes** into domain events.  
-- Learned how to **split microservices** and define **bounded contexts** to manage large-system complexity.  
-- Understood trade-offs between **synchronous and asynchronous communication** and integration patterns like **pub/sub, point-to-point, streaming**.  
-
-#### Leveraging modern tools
-- Explored **Amazon Q Developer**, an AI tool for SDLC support from planning to maintenance.  
-- Learned to **automate code transformation** and pilot serverless with **AWS Lambda** to improve productivity.  
-
-#### Networking and discussions
-- The workshop offered opportunities to exchange ideas with experts, peers, and business teams, enhancing the **ubiquitous language** between business and tech.  
-- Real-world examples reinforced the importance of the **business-first approach** rather than focusing solely on technology.  
-
-#### Lessons learned
-- Applying DDD and event-driven patterns reduces **coupling** while improving **scalability** and **resilience**.  
-- Modernization requires a **phased approach** with **ROI measurement**; rushing the process can be risky.  
-- AI tools like Amazon Q Developer can significantly **boost productivity** when integrated into the current workflow.  
-
-#### Some event photos
-*Add your event photos here*  
-
-> Overall, the event not only provided technical knowledge but also helped me reshape my thinking about application design, system modernization, and cross-team collaboration.
+**Lesson learned:** Sometimes it's not bad to care a little about spiritual and emotional values.

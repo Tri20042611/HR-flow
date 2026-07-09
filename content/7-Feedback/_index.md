@@ -1,47 +1,46 @@
 ---
-title: "Sharing and Feedback"
+title: "Feedback & Suggestions"
 date: 2024-01-01
 weight: 7
 chapter: false
 pre: " <b> 7. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
+>Here you can freely share your personal experiences and feedback about the First Cloud AI Journey program, helping the FCAJ team improve based on the following categories:
 
-> Here, you can freely share your personal opinions about your experience participating in the First Cloud AI Journey program. This will help the FCAJ team improve any shortcomings based on the following aspects:
+### General Evaluation
 
-### Overall Evaluation
+**1. Work Environment**
+The work environment is very clean, organized, and friendly for me. Although I rarely meet my team members, other teams are also very open and supportive. It's just a bit quiet sometimes, which sometimes makes me feel pressured.
 
-**1. Working Environment**  
-The working environment is very friendly and open. FCAJ members are always willing to help whenever I encounter difficulties, even outside working hours. The workspace is tidy and comfortable, helping me focus better. However, I think it would be nice to have more social gatherings or team bonding activities to strengthen relationships.
+**2. Mentor / Admin Team Support**
+In my experience, the mentors and admins are very kind. Sometimes they are strict, but I know it's necessary so that I won't feel lost when working at other companies. Especially anh Long, who guides and jokes around - I met him at the meetup, and it helps me feel more comfortable and relaxed when presenting problems or ideas to the mentors.
 
-**2. Support from Mentor / Team Admin**  
-The mentor provides very detailed guidance, explains clearly when I don’t understand, and always encourages me to ask questions. The admin team supports administrative tasks, provides necessary documents, and creates favorable conditions for me to work effectively. I especially appreciate that the mentor allows me to try and solve problems myself instead of just giving the answer.
+**3. Job Relevance to Academic Major**
+The beginning was a bit overwhelming for me with unfamiliar knowledge different from what I learned at school and in my Cybersecurity major. But thanks to that, I was able to discover my own learning ability, adaptability, and problem-solving skills.
 
-**3. Relevance of Work to Academic Major**  
-The tasks I was assigned align well with the knowledge I learned at university, while also introducing me to new areas I had never encountered before. This allowed me to both strengthen my foundational knowledge and gain practical skills.
+**4. Learning & Skill Development Opportunities**
+During the internship, I was exposed to and learned many new technologies like AWS, AI tools, and cloud services. I also improved my skills in writing reports, building websites, communication, and presentation. In particular, I learned how to explore and solve problems independently instead of waiting for answers.
 
-**4. Learning & Skill Development Opportunities**  
-During the internship, I learned many new skills such as using project management tools, teamwork skills, and professional communication in a corporate environment. The mentor also shared valuable real-world experiences that helped me better plan my career path.
+**5. Culture & Team Spirit**
+The company culture is very positive: everyone respects each other, works seriously but still enjoys themselves. When there are urgent projects, everyone works together and supports each other regardless of position. This helps me feel like I'm part of the team, even though I'm just an intern.
 
-**5. Company Culture & Team Spirit**  
-The company culture is very positive: everyone respects each other, works seriously but still keeps things enjoyable. When there are urgent projects, everyone works together and supports one another regardless of their position. This made me feel like a real part of the team, even as an intern.
-
-**6. Internship Policies / Benefits**  
-The company provides an internship allowance and offers flexible working hours when needed. In addition, having the opportunity to join internal training sessions is a big plus.
-
----
+**6. Policies / Benefits for Interns**
+I think the attendance policy is a bit lenient, leading to many students being late and asking for absences, which takes away spots from other students who genuinely want to come. For me, this is very unfair to those who want to grow and come to the office.
 
 ### Additional Questions
-- What did you find **most satisfying** during your internship?  
-- What do you think the company **should improve** for future interns?  
-- If recommending to a friend, would you **suggest they intern here**? Why or why not?  
 
----
+- **What are you most satisfied with during your internship?**
+  Being exposed to the latest cloud and AI technologies, receiving support from mentors, and having opportunities to learn from real projects.
 
-### Suggestions & Expectations
-- Do you have any suggestions to improve the internship experience?  
-- Would you like to continue this program in the future?  
-- Any other comments (free sharing):
+- **What do you think the company needs to improve for future interns?**
+  There should be a stricter attendance policy to ensure fairness for students who are genuinely serious about learning.
+
+- **If you were to recommend to friends, would you advise them to intern here? Why?**
+  Yes, because it's a good environment to learn new technologies, receive mentor support, and have opportunities to practice with real projects.
+
+### Suggestions & Wishes
+
+- This batch of students might be too large, making it difficult for the mentors to manage. Perhaps our batch is the worst. I hope the mentors will keep up the good work and continue to lead more teams to spread this opportunity to more students.
+
+- I hope to continue my involvement with FCAJ in the future to keep learning and developing myself.

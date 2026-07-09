@@ -1,108 +1,143 @@
 ---
-title: "Bản đề xuất"
+title: "Bản đề xuất — Dự án HireFlow AI"
 date: 2024-01-01
 weight: 2
 chapter: false
 pre: " <b> 2. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
-Tại phần này, bạn cần tóm tắt các nội dung trong workshop mà bạn **dự tính** sẽ làm.
+### 1. Tóm tắt điều hành
 
-# IoT Weather Platform for Lab Research  
-## Giải pháp AWS Serverless hợp nhất cho giám sát thời tiết thời gian thực  
+HireFlow AI được thiết kế nhằm tự động hóa quy trình sàng lọc hồ sơ ứng viên (CV) cho bộ phận tuyển dụng, thay thế các thao tác thủ công lặp lại bằng nền tảng AWS Serverless tích hợp trí tuệ nhân tạo. Hệ thống hỗ trợ tiếp nhận CV từ nhiều kênh (web form, email, tải lên trực tiếp), tự động trích xuất văn bản qua Amazon Textract, chấm điểm ứng viên nhờ mô hình ngôn ngữ lớn (LLM), và trình bày danh sách xếp hạng trên bảng điều khiển dành cho nhà tuyển dụng (HR Dashboard). Nền tảng phục vụ tối đa 10–15 tin tuyển dụng đang mở và xử lý đồng thời lên tới 200 CV/ngày, với khả năng mở rộng theo nhu cầu thực tế.
 
-### 1. Tóm tắt điều hành  
-IoT Weather Platform được thiết kế dành cho nhóm *ITea Lab* tại TP. Hồ Chí Minh nhằm nâng cao khả năng thu thập và phân tích dữ liệu thời tiết. Nền tảng hỗ trợ tối đa 5 trạm thời tiết, có khả năng mở rộng lên 10–15 trạm, sử dụng thiết bị biên Raspberry Pi kết hợp cảm biến ESP32 để truyền dữ liệu qua MQTT. Nền tảng tận dụng các dịch vụ AWS Serverless để cung cấp giám sát thời gian thực, phân tích dự đoán và tiết kiệm chi phí, với quyền truy cập giới hạn cho 5 thành viên phòng lab thông qua Amazon Cognito.  
+### 2. Tuyên bố vấn đề
 
-### 2. Tuyên bố vấn đề  
-*Vấn đề hiện tại*  
-Các trạm thời tiết hiện tại yêu cầu thu thập dữ liệu thủ công, khó quản lý khi có nhiều trạm. Không có hệ thống tập trung cho dữ liệu hoặc phân tích thời gian thực, và các nền tảng bên thứ ba thường tốn kém và quá phức tạp.  
+**Vấn đề hiện tại**
 
-*Giải pháp*  
-Nền tảng sử dụng AWS IoT Core để tiếp nhận dữ liệu MQTT, AWS Lambda và API Gateway để xử lý, Amazon S3 để lưu trữ (bao gồm data lake), và AWS Glue Crawlers cùng các tác vụ ETL để trích xuất, chuyển đổi, tải dữ liệu từ S3 data lake sang một S3 bucket khác để phân tích. AWS Amplify với Next.js cung cấp giao diện web, và Amazon Cognito đảm bảo quyền truy cập an toàn. Tương tự như Thingsboard và CoreIoT, người dùng có thể đăng ký thiết bị mới và quản lý kết nối, nhưng nền tảng này hoạt động ở quy mô nhỏ hơn và phục vụ mục đích sử dụng nội bộ. Các tính năng chính bao gồm bảng điều khiển thời gian thực, phân tích xu hướng và chi phí vận hành thấp.  
+Quy trình tuyển dụng hiện tại phụ thuộc vào các thao tác thủ công: nhận CV qua email, tải xuống và đọc từng tệp, sao chép thông tin sang bảng tính, đối chiếu với yêu cầu công việc (JD), rồi chấm điểm thủ công. Trung bình mỗi CV mất 8–12 phút xử lý; khi có 100 hồ sơ, một nhà tuyển dụng cần khoảng 15–20 giờ làm việc liên tục chỉ để sàng lọc ban đầu. Việc đánh giá thiếu nhất quán giữa các ứng viên, dễ bỏ sót hồ sơ tiềm năng và không có dấu vết kiểm toán (audit trail).
 
-*Lợi ích và hoàn vốn đầu tư (ROI)*  
-Giải pháp tạo nền tảng cơ bản để các thành viên phòng lab phát triển một nền tảng IoT lớn hơn, đồng thời cung cấp nguồn dữ liệu cho những người nghiên cứu AI phục vụ huấn luyện mô hình hoặc phân tích. Nền tảng giảm bớt báo cáo thủ công cho từng trạm thông qua hệ thống tập trung, đơn giản hóa quản lý và bảo trì, đồng thời cải thiện độ tin cậy dữ liệu. Chi phí hàng tháng ước tính 0,66 USD (theo AWS Pricing Calculator), tổng cộng 7,92 USD cho 12 tháng. Tất cả thiết bị IoT đã được trang bị từ hệ thống trạm thời tiết hiện tại, không phát sinh chi phí phát triển thêm. Thời gian hoàn vốn 6–12 tháng nhờ tiết kiệm đáng kể thời gian thao tác thủ công.  
+**Giải pháp**
 
-### 3. Kiến trúc giải pháp  
-Nền tảng áp dụng kiến trúc AWS Serverless để quản lý dữ liệu từ 5 trạm dựa trên Raspberry Pi, có thể mở rộng lên 15 trạm. Dữ liệu được tiếp nhận qua AWS IoT Core, lưu trữ trong S3 data lake và xử lý bởi AWS Glue Crawlers và ETL jobs để chuyển đổi và tải vào một S3 bucket khác cho mục đích phân tích. Lambda và API Gateway xử lý bổ sung, trong khi Amplify với Next.js cung cấp bảng điều khiển được bảo mật bởi Cognito.  
+Nền tảng sử dụng Amazon S3 làm kho lưu trữ trung gian (quarantine zone) để tiếp nhận CV, AWS Lambda kết hợp Amazon Textract để trích xuất văn bản từ PDF và DOCX, Amazon SQS để tách rời các giai đoạn xử lý, AWS Lambda tích hợp mô hình ngôn ngữ lớn (LLM) để chấm điểm ứng viên dựa trên JD, và Amazon DynamoDB để lưu trữ dữ liệu có cấu trúc. Bảng điều khiển React (HR Dashboard) được lưu trữ trên Amazon S3 phân phối qua CloudFront, bảo mật bằng Amazon Cognito. Đường ống xử lý hàng loạt được tự động hóa hoàn toàn, kết quả trả về trong vòng 2–3 phút/CV.
 
-![IoT Weather Station Architecture](/images/2-Proposal/edge_architecture.jpeg)
+**Lợi ích và hoàn vốn đầu tư (ROI)**
 
-![IoT Weather Platform Architecture](/images/2-Proposal/platform_architecture.jpeg)
+Giải pháp cắt giảm 80% thời gian sàng lọc ban đầu (từ 10 phút xuống dưới 2 phút mỗi CV), đảm bảo tính nhất quán trong đánh giá nhờ tiêu chí chấm điểm thống nhất qua LLM, đồng thời tạo lịch sử đầy đủ phục vụ kiểm toán và phân tích về sau. Chi phí hạ tầng ước tính dưới 5 USD/tháng cho khối lượng 200 CV/ngày (theo AWS Pricing Calculator), tổng cộng dưới 60 USD/năm. Thời gian hoàn vốn ước tính dưới 6 tháng dựa trên hiệu suất nhân sự tiết kiệm được.
 
-*Dịch vụ AWS sử dụng*  
-- *AWS IoT Core*: Tiếp nhận dữ liệu MQTT từ 5 trạm, mở rộng lên 15.  
-- *AWS Lambda*: Xử lý dữ liệu và kích hoạt Glue jobs (2 hàm).  
-- *Amazon API Gateway*: Giao tiếp với ứng dụng web.  
-- *Amazon S3*: Lưu trữ dữ liệu thô (data lake) và dữ liệu đã xử lý (2 bucket).  
-- *AWS Glue*: Crawlers lập chỉ mục dữ liệu, ETL jobs chuyển đổi và tải dữ liệu.  
-- *AWS Amplify*: Lưu trữ giao diện web Next.js.  
-- *Amazon Cognito*: Quản lý quyền truy cập cho người dùng phòng lab.  
+### 3. Kiến trúc giải pháp
 
-*Thiết kế thành phần*  
-- *Thiết bị biên*: Raspberry Pi thu thập và lọc dữ liệu cảm biến, gửi tới IoT Core.  
-- *Tiếp nhận dữ liệu*: AWS IoT Core nhận tin nhắn MQTT từ thiết bị biên.  
-- *Lưu trữ dữ liệu*: Dữ liệu thô lưu trong S3 data lake; dữ liệu đã xử lý lưu ở một S3 bucket khác.  
-- *Xử lý dữ liệu*: AWS Glue Crawlers lập chỉ mục dữ liệu; ETL jobs chuyển đổi để phân tích.  
-- *Giao diện web*: AWS Amplify lưu trữ ứng dụng Next.js cho bảng điều khiển và phân tích thời gian thực.  
-- *Quản lý người dùng*: Amazon Cognito giới hạn 5 tài khoản hoạt động.  
+**Tổng quan**
 
-### 4. Triển khai kỹ thuật  
-*Các giai đoạn triển khai*  
-Dự án gồm 2 phần — thiết lập trạm thời tiết biên và xây dựng nền tảng thời tiết — mỗi phần trải qua 4 giai đoạn:  
-1. *Nghiên cứu và vẽ kiến trúc*: Nghiên cứu Raspberry Pi với cảm biến ESP32 và thiết kế kiến trúc AWS Serverless (1 tháng trước kỳ thực tập).  
-2. *Tính toán chi phí và kiểm tra tính khả thi*: Sử dụng AWS Pricing Calculator để ước tính và điều chỉnh (Tháng 1).  
-3. *Điều chỉnh kiến trúc để tối ưu chi phí/giải pháp*: Tinh chỉnh (ví dụ tối ưu Lambda với Next.js) để đảm bảo hiệu quả (Tháng 2).  
-4. *Phát triển, kiểm thử, triển khai*: Lập trình Raspberry Pi, AWS services với CDK/SDK và ứng dụng Next.js, sau đó kiểm thử và đưa vào vận hành (Tháng 2–3).  
+HireFlow AI áp dụng kiến trúc AWS Serverless theo mô hình hàng đợi (queue-based pipeline) để đảm bảo khả năng mở rộng, chịu lỗi và tách rời giữa các giai đoạn. CV được ứng viên tải lên qua presigned URL thẳng vào S3 Quarantine bucket (vùng cách ly), tránh đi qua API Gateway để giảm tải và vượt giới hạn payload 6 MB. Sau khi vượt qua lớp xác thực định dạng, CV được chuyển sang S3 Clean bucket và nạp vào hàng đợi xử lý trích xuất.
 
-*Yêu cầu kỹ thuật*  
-- *Trạm thời tiết biên*: Cảm biến (nhiệt độ, độ ẩm, lượng mưa, tốc độ gió), vi điều khiển ESP32, Raspberry Pi làm thiết bị biên. Raspberry Pi chạy Raspbian, sử dụng Docker để lọc dữ liệu và gửi 1 MB/ngày/trạm qua MQTT qua Wi-Fi.  
-- *Nền tảng thời tiết*: Kiến thức thực tế về AWS Amplify (lưu trữ Next.js), Lambda (giảm thiểu do Next.js xử lý), AWS Glue (ETL), S3 (2 bucket), IoT Core (gateway và rules), và Cognito (5 người dùng). Sử dụng AWS CDK/SDK để lập trình (ví dụ IoT Core rules tới S3). Next.js giúp giảm tải Lambda cho ứng dụng web fullstack.  
+**Sơ đồ kiến trúc**
 
-### 5. Lộ trình & Mốc triển khai  
-- *Trước thực tập (Tháng 0)*: 1 tháng lên kế hoạch và đánh giá trạm cũ.  
-- *Thực tập (Tháng 1–3)*:  
-    - Tháng 1: Học AWS và nâng cấp phần cứng.  
-    - Tháng 2: Thiết kế và điều chỉnh kiến trúc.  
-    - Tháng 3: Triển khai, kiểm thử, đưa vào sử dụng.  
-- *Sau triển khai*: Nghiên cứu thêm trong vòng 1 năm.  
+![HireFlow AI Architecture](/images/2-Proposal/hireflow_architecture.png)
 
-### 6. Ước tính ngân sách  
-Có thể xem chi phí trên [AWS Pricing Calculator](https://calculator.aws/#/estimate?id=621f38b12a1ef026842ba2ddfe46ff936ed4ab01)  
-Hoặc tải [tệp ước tính ngân sách](../attachments/budget_estimation.pdf).  
+**Dịch vụ AWS sử dụng**
 
-*Chi phí hạ tầng*  
-- AWS Lambda: 0,00 USD/tháng (1.000 request, 512 MB lưu trữ).  
-- S3 Standard: 0,15 USD/tháng (6 GB, 2.100 request, 1 GB quét).  
-- Truyền dữ liệu: 0,02 USD/tháng (1 GB vào, 1 GB ra).  
-- AWS Amplify: 0,35 USD/tháng (256 MB, request 500 ms).  
-- Amazon API Gateway: 0,01 USD/tháng (2.000 request).  
-- AWS Glue ETL Jobs: 0,02 USD/tháng (2 DPU).  
-- AWS Glue Crawlers: 0,07 USD/tháng (1 crawler).  
-- MQTT (IoT Core): 0,08 USD/tháng (5 thiết bị, 45.000 tin nhắn).  
+- **Amazon S3 (2 bucket):** Quarantine zone tiếp nhận file thô; Clean zone chứa file đã xác thực cho pipeline xử lý.
+- **AWS Lambda (7 hàm):** File-validator (bảo mật), Extract (Textract), Extract-complete (gộp kết quả), Score (LLM), Save-and-notify (ghi DB + email), Candidates (CRUD cho HR Dashboard), JD-management (quản lý tin tuyển dụng), Get-presigned-url (upload URL).
+- **Amazon API Gateway:** HTTP API làm lớp giao tiếp giữa React SPA và Lambda, có Cognito authorizer.
+- **Amazon SQS (2 hàng đợi):** Score-queue đệm trước giai đoạn chấm điểm; Save-queue đệm trước giai đoạn lưu và thông báo.
+- **Amazon Textract:** Trích xuất văn bản và cấu trúc bảng từ CV PDF/DOCX.
+- **Amazon DynamoDB (2 bảng):** Candidates lưu hồ sơ đã chấm; Jobs lưu tin tuyển dụng + JD + tiêu chí chấm.
+- **Amazon Cognito:** User pool cho HR (5 tài khoản), user pool riêng cho ứng viên (tùy chọn).
+- **Amazon SNS:** Textract notification topic, HR alert topic gửi email khi pipeline lỗi.
+- **Amazon CloudFront + S3 Hosting:** Phân phối HR Dashboard (React SPA).
+- **AWS Secrets Manager:** Lưu API key cho LLM provider.
+- **AWS KMS:** Mã hóa dữ liệu trong S3, DynamoDB, SQS.
 
-*Tổng*: 0,7 USD/tháng, 8,40 USD/12 tháng  
-- *Phần cứng*: 265 USD một lần (Raspberry Pi 5 và cảm biến).  
+**Thiết kế thành phần**
 
-### 7. Đánh giá rủi ro  
-*Ma trận rủi ro*  
-- Mất mạng: Ảnh hưởng trung bình, xác suất trung bình.  
-- Hỏng cảm biến: Ảnh hưởng cao, xác suất thấp.  
-- Vượt ngân sách: Ảnh hưởng trung bình, xác suất thấp.  
+- **Lớp tiếp nhận (Zone 1):** Ứng viên yêu cầu presigned URL từ Lambda `get-presigned-url`, sau đó tải file trực tiếp lên S3 Quarantine qua HTTPS PUT.
+- **Lớp bảo mật (Zone 2):** EventBridge rule bắt sự kiện S3 ObjectCreated ở prefix `web/`; Lambda `file-validator` kiểm tra MIME (magic bytes), kích thước ≤ 5 MB, dedup SHA-256, sau đó copy sang Clean và xóa ở Quarantine.
+- **Lớp xử lý (Zone 3):** Lambda `extract` đọc file ở Clean, gọi Textract async, lưu JobId; SNS Textract gọi Lambda `extract-complete` gộp kết quả, gửi SQS message sang hàng đợi chấm điểm.
+- **Lớp AI:** Lambda `score` nhận SQS message, đọc JD từ DynamoDB, gọi LLM (OpenAI-compatible endpoint), lưu điểm và lý do vào DynamoDB, gửi SQS message sang hàng đợi lưu.
+- **Lớp lưu trữ & thông báo:** Lambda `save-and-notify` ghi bản ghi cuối cùng vào DynamoDB và gửi email xác nhận cho ứng viên qua SES.
+- **Lớp giao diện:** HR Dashboard React SPA gọi API Gateway → Lambda `candidates`/`jd-management` đọc/ghi DynamoDB, được bảo vệ bởi Cognito.
 
-*Chiến lược giảm thiểu*  
-- Mạng: Lưu trữ cục bộ trên Raspberry Pi với Docker.  
-- Cảm biến: Kiểm tra định kỳ, dự phòng linh kiện.  
-- Chi phí: Cảnh báo ngân sách AWS, tối ưu dịch vụ.  
+### 4. Triển khai kỹ thuật
 
-*Kế hoạch dự phòng*  
-- Quay lại thu thập thủ công nếu AWS gặp sự cố.  
-- Sử dụng CloudFormation để khôi phục cấu hình liên quan đến chi phí.  
+**Các giai đoạn triển khai**
 
-### 8. Kết quả kỳ vọng  
-*Cải tiến kỹ thuật*: Dữ liệu và phân tích thời gian thực thay thế quy trình thủ công. Có thể mở rộng tới 10–15 trạm.  
-*Giá trị dài hạn*: Nền tảng dữ liệu 1 năm cho nghiên cứu AI, có thể tái sử dụng cho các dự án tương lai.
+Dự án gồm 4 giai đoạn chính, mỗi giai đoạn có sản phẩm bàn giao rõ ràng:
+
+1. **Nghiên cứu và thiết kế kiến trúc (Tuần 1–2):** Khảo sát quy trình tuyển dụng hiện tại, đánh giá các dịch vụ AWS phù hợp, lập sơ đồ kiến trúc tổng thể và sơ đồ tuần tự cho từng flow chính.
+2. **Tính toán chi phí và đánh giá tính khả thi (Tuần 3):** Dùng AWS Pricing Calculator ước tính chi phí cho các kịch bản tải thấp/trung bình/cao; xác định điểm tắc nghẽn tiềm ẩn và cách giảm chi phí (Lambda memory sizing, S3 lifecycle, SQS batching).
+3. **Điều chỉnh kiến trúc để tối ưu (Tuần 4–5):** Tinh chỉnh thiết kế — giảm tải cho Lambda bằng cách tách đường ống thành nhiều stage với SQS, tái cấu trúc IAM role theo nguyên tắc least-privilege, bổ sung cơ chế retry và dead-letter queue.
+4. **Phát triển, kiểm thử và triển khai (Tuần 6–12):** Lập trình Lambda bằng Python 3.12 với boto3, sử dụng AWS SAM làm IaC để định nghĩa toàn bộ hạ tầng; kiểm thử từng Lambda với event mẫu; chạy end-to-end trên tài khoản thật với 10 CV mẫu.
+
+**Yêu cầu kỹ thuật**
+
+- **AWS SAM:** Định nghĩa toàn bộ stack (Lambda, S3, DynamoDB, SQS, SNS, Cognito, API Gateway, CloudFront) bằng `template.yaml`.
+- **AWS Lambda:** Python 3.12, boto3 SDK, structured logging, X-Ray tracing.
+- **Amazon Textract:** `StartDocumentAnalysis` với feature `TABLES` + `FORMS`, polling hoặc SNS callback cho async completion.
+- **LLM Integration:** OpenAI-compatible endpoint (đã provision sẵn qua 9router.xjanua.me), lưu key trong Secrets Manager, prompt engineering cho chấm điểm 4 tiêu chí (skills, experience, education, fit).
+- **Frontend:** React 19 + Vite + Amazon Cognito Identity SDK, build artifact deploy lên S3 phân phối qua CloudFront.
+- **Bảo mật:** IAM least-privilege, S3 block public access, S3 + DynamoDB + SQS encryption với KMS, VPC endpoint không bắt buộc nhưng network ACL được xem xét.
+- **Observability:** CloudWatch Logs (giữ 7 ngày), CloudWatch Metrics (Lambda duration + error count), CloudWatch Alarm khi Lambda error rate > 5%.
+
+### 5. Lộ trình & Mốc triển khai
+
+Dự án chạy xuyên suốt 12 tuần, align với lịch thực tập.
+
+### 6. Ước tính ngân sách
+
+**Chi phí hạ tầng (ước tính cho 200 CV/ngày)**
+
+| Danh mục | Dịch vụ | Chi phí ước tính |
+|---|---|---|
+| Lưu trữ & CDN | S3 (2 bucket) | ~$2.50/tháng |
+| Lưu trữ & CDN | CloudFront + S3 Hosting | ~$1.00/tháng |
+| Tính toán | Lambda (7 hàm) | ~$5.00/tháng |
+| AI/ML | Textract | ~$15.00/tháng |
+| Mạng | API Gateway (HTTP API) | ~$3.50/tháng |
+| Mạng | SQS (2 hàng đợi) | ~$0.00/tháng |
+| Mạng | SNS (2 topic) | ~$0.00/tháng |
+| Cơ sở dữ liệu | DynamoDB (2 bảng) | ~$8.00/tháng |
+| Bảo mật | Secrets Manager | ~$0.40/tháng |
+| Bảo mật | KMS | ~$1.00/tháng |
+| Giám sát | CloudWatch | ~$2.00/tháng |
+| **Tổng** | | **~$38.40/tháng** |
+
+**Lưu ý quan trọng:**
+
+1. Textract là chi phí chiếm chủ yếu ở $0.015/trang — tăng tuyến tính với số CV xử lý.
+2. SQS, SNS và Cognito đều nằm trong free tier ở khối lượng dự kiến.
+3. Lambda có 1 triệu request + 400K GB-giây miễn phí mỗi tháng.
+4. Chi phí tăng chủ yếu ở Textract và Lambda khi lượng CV tăng.
+
+**Phần cứng:** Không có — toàn bộ xử lý trên cloud, ứng viên dùng trình duyệt web.
+
+### 7. Đánh giá rủi ro
+
+**Ma trận rủi ro**
+
+| Rủi ro | Ảnh hưởng | Xác suất |
+|---|---|---|
+| Textract quota vượt free-tier | Trung bình | Thấp |
+| LLM API timeout/down | Cao | Thấp |
+| Vượt ngân sách do Textract cost | Trung bình | Trung bình |
+| CV giả mạo / chèn malware | Cao | Thấp |
+| Race condition khi nhiều CV cùng lúc | Trung bình | Thấp |
+
+**Chiến lược giảm thiểu**
+
+- **Quota:** Bật CloudWatch alarm cho Textract `ThrottledCount`, xin quota raise khi cần.
+- **LLM availability:** Triển khai circuit breaker trong Lambda `score`; hàng đợi SQS giữ message retry tối đa 3 lần trước khi vào DLQ.
+- **Secret hygiene:** Truy cập key qua biến môi trường từ Secrets Manager, không log; xoay key mỗi 90 ngày.
+- **Chi phí:** Cảnh báo ngân sách AWS Billing ở mức $5/tháng; tự động tắt Textract nếu vượt.
+- **Malware:** Pipeline xác thực kiểm tra MIME bằng magic bytes (không tin Content-Type header), lưu CV ở Quarantine 7 ngày trước khi xóa để HR review khi cần.
+- **Concurrency:** DynamoDB conditional write trên SHA-256 hash để chống duplicate; idempotency key trên mỗi message.
+
+**Kế hoạch dự phòng**
+
+- Quay lại quy trình thủ công nếu hệ thống sự cố hơn 24 giờ.
+- Toàn bộ hạ tầng được IaC qua SAM, khôi phục trong dưới 30 phút bằng `sam deploy`.
+- Lưu CV đã xử lý ở Clean bucket 90 ngày làm backup.
+
+### 8. Kết quả kỳ vọng
+
+- **Cải tiến kỹ thuật:** Giảm 80% thời gian sàng lọc CV; chấm điểm nhất quán qua LLM; có audit trail đầy đủ; mở rộng được lên 500 CV/ngày mà không tăng chi phí đáng kể.
+- **Giá trị dài hạn:** Dữ liệu ứng viên lịch sử trong DynamoDB có thể dùng để phân tích xu hướng tuyển dụng, đào tạo mô hình scoring riêng; nền tảng có thể tái sử dụng cho các bài toán tương tự (sàng lọc đơn xét duyệt, đánh giá nhà cung cấp).

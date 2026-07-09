@@ -1,37 +1,102 @@
 ---
-title : "Dọn dẹp tài nguyên"
+title : "Validation & Analysis"
 date : 2024-01-01
 weight : 6
 chapter : false
-pre : " <b> 5.6. </b> "
 ---
 
-#### Dọn dẹp tài nguyên
+### End-to-end test
 
-Xin chúc mừng bạn đã hoàn thành xong lab này!
-Trong lab này, bạn đã học về các mô hình kiến trúc để truy cập Amazon S3 mà không sử dụng Public Internet.
+**Upload 1 CV thật và theo dõi pipeline:**
 
-+ Bằng cách tạo Gateway endpoint, bạn đã cho phép giao tiếp trực tiếp giữa các tài nguyên EC2 và Amazon S3, mà không đi qua Internet Gateway.
-Bằng cách tạo Interface endpoint, bạn đã mở rộng kết nối S3 đến các tài nguyên chạy trên trung tâm dữ liệu trên chỗ của bạn thông qua AWS Site-to-Site VPN hoặc Direct Connect.
+```bash
+# 1. Lấy presigned URL (hoặc upload trực tiếp nếu có frontend)
+# 2. Upload test CV lên Quarantine bucket
+aws s3 cp test-cv.pdf s3://hireflow-quarantine-<ACCOUNT_ID>/web/test-cv.pdf
 
-#### Dọn dẹp
-1. Điều hướng đến Hosted Zones trên phía trái của bảng điều khiển Route 53. Nhấp vào tên của  s3.us-east-1.amazonaws.com zone. Nhấp vào Delete và xác nhận việc xóa bằng cách nhập từ khóa "delete".
+# 3. Theo dõi Lambda FileValidator logs
+aws logs tail /aws/lambda/hireflow-file-validator --follow --format short
 
-![hosted zone](/images/5-Workshop/5.6-Cleanup/delete-zone.png)
+# 4. Kiểm tra file đã copy sang Clean bucket
+aws s3 ls s3://hireflow-clean-<ACCOUNT_ID>/
 
-2. Disassociate Route 53 Resolver Rule - myS3Rule from "VPC Onprem" and Delete it. 
+# 5. Theo dõi Lambda Extract logs
+aws logs tail /aws/lambda/hireflow-extract --follow --format short
 
-![hosted zone](/images/5-Workshop/5.6-Cleanup/vpc.png)
+# 6. Kiểm tra OCR text đã lưu
+aws s3 ls s3://hireflow-clean-<ACCOUNT_ID>/ocr/
 
-4.Mở console của CloudFormation và xóa hai stack CloudFormation mà bạn đã tạo cho bài thực hành này:
-+ PLOnpremSetup
-+ PLCloudSetup
+# 7. Theo dõi Lambda Score logs
+aws logs tail /aws/lambda/hireflow-score --follow --format short
 
-![delete stack](/images/5-Workshop/5.6-Cleanup/delete-stack.png)
+# 8. Kiểm tra kết quả trong DynamoDB
+aws dynamodb scan \
+  --table-name hireflow-candidates \
+  --filter-expression "score_total > :zero" \
+  --expression-attribute-values '{"N": {"N": "0"}}' \
+  --output json
+```
 
-5. Xóa các S3 bucket
+**Expected output sau khi pipeline chạy xong:**
 
-+ Mở bảng điều khiển S3
-+ Chọn bucket chúng ta đã tạo cho lab, nhấp chuột và xác nhận là empty. Nhấp Delete và xác nhận delete.
-+ 
-![delete s3](/images/5-Workshop/5.6-Cleanup/delete-s3.png)
+```json
+{
+  "candidate_id": "uuid-...",
+  "job_id": "job-001",
+  "score_total": 75.5,
+  "score_detail": {
+    "experience": 80.0,
+    "skills": 70.0,
+    "education": 85.0,
+    "soft_skill": 70.0
+  },
+  "summary": "Ứng viên có 5 năm kinh nghiệm backend, thành thạo Python và AWS. ...",
+  "flags": [],
+  "status": "reviewing",
+  "confidence": "high"
+}
+```
+
+### CloudWatch Metrics phân tích
+
+Kiểm tra pipeline performance:
+
+```bash
+# Lambda invocation count và error rate
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/Lambda \
+  --metric-name Invocations \
+  --dimensions Name=FunctionName,Value=hireflow-file-validator \
+  --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300 \
+  --statistics Sum
+
+# SQS queue depth (message chờ xử lý)
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/SQS \
+  --metric-name ApproximateNumberOfMessagesVisible \
+  --dimensions Name=QueueName,Value=hireflow-score-queue \
+  --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300 \
+  --statistics Average
+```
+
+### DLQ inspection (dead-letter queue)
+
+Kiểm tra nếu có message thất bại:
+
+```bash
+# Số message trong DLQ
+aws sqs get-queue-attributes \
+  --queue-url https://sqs.ap-southeast-2.amazonaws.com/<ACCOUNT_ID>/hireflow-score-dlq \
+  --attribute-names ApproximateNumberOfMessages
+
+# Đọc message từ DLQ để debug
+aws sqs receive-message \
+  --queue-url https://sqs.ap-southeast-2.amazonaws.com/<ACCOUNT_ID>/hireflow-score-dlq \
+  --max-number-of-messages 1
+
+# CloudWatch alarm đã configured — HR sẽ nhận email nếu DLQ có message
+```

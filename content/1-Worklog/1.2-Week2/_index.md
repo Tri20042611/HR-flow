@@ -1,57 +1,35 @@
 ---
-title: "Week 2 Worklog"
-date: 2024-01-01
-weight: 1
+title: "Worklog Week 2"
+date: 2026-04-27
+weight: 2
 chapter: false
 pre: " <b> 1.2. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
+### Week 2 Goals:
 
-### Week 2 Objectives:
+- Deep dive into EC2: instance families, AMI, EBS, Metadata Service and how to use Session Manager securely without opening SSH port.
+- Practice basic Linux operations on EC2 (users, permissions, processes, logs).
 
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+> Light schedule this week, only 2 real sessions because mid-week I had to focus on university assignments. The rest of the time I read docs at home.
 
-### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
+### Tasks done this week:
 
+| Session | Date | Task | Reference |
+| --- | --- | --- | --- |
+| Session 1 | 28/04/2026 | Deep dive into EC2 & EBS: <br> - Instance families: general (t3, m5), compute optimized (c5), memory optimized (r5) <br> - IMDSv1 vs IMDSv2 and SSRF risks <br> - EBS volume types (gp3, io2, st1, sc1) <br> - Hands-on: created an EBS volume, attached to EC2, formatted ext4 and mounted at `/data` | <https://cloudjourney.awsstudygroup.com/> |
+| Session 2 | 30/04/2026 | Session Manager & Linux basics: <br> - Attached IAM role with SSM permissions to EC2, verified SSM Agent <br> - Closed port 22 on Security Group, connected via Session Manager from console & CLI <br> - Reviewed Linux: `useradd`, `chmod`, `chown`, `systemctl`, `journalctl`, `ss`, `df`, `du` <br> - Read `/var/log/` to debug a Nginx start failure | <https://cloudjourney.awsstudygroup.com/> |
 
-### Week 2 Achievements:
+### Week 2 Outcomes:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+- Differentiated EC2 instance families and chose the right one for each task.
+- Understood **IMDSv1 vs IMDSv2** and the SSRF risk of leaving IMDSv1 on.
+- Created, attached, mounted, snapshotted and resized EBS volumes confidently.
+- Successfully configured **Session Manager** to access EC2 without opening port 22 — a best practice I want to keep using.
+- More confident reading and debugging Linux system logs.
 
-* Successfully created and configured an AWS Free Tier account.
+### Difficulties and lessons learned:
 
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+- Session Manager did not connect at first because I forgot to attach the IAM role with `AmazonSSMManagedInstanceCore` to the EC2. After attaching the role, it worked.
+- When mounting EBS for the first time I forgot to run `mkfs.ext4` before `mount`, got a `wrong fs type` error.
+- Was confused between `systemctl` and `service`; decided to just stick with `systemctl` for modern services.

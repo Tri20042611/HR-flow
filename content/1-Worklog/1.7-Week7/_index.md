@@ -1,57 +1,41 @@
 ---
-title: "Week 7 Worklog"
-date: 2024-01-01
-weight: 1
+title: "Worklog Week 7"
+date: 2026-06-01
+weight: 7
 chapter: false
 pre: " <b> 1.7. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
+### Week 7 Goals:
 
-### Week 7 Objectives:
+- Master **AWS KMS**: customer-managed key, key policy, grant, alias and rotation.
+- Deploy detection & protection services: **GuardDuty**, **Security Hub**, **WAF** and **Shield Standard**.
+- Get familiar with monitoring via **CloudTrail**, **CloudWatch Logs/Metrics/Alarms** and **EventBridge**.
 
-* Connect and get acquainted with members of First Cloud AI Journey.
-* Understand basic AWS services, how to use the console & CLI.
+> 5 sessions in a row — the most "security-feeling" week so far because almost every service is directly tied to protection and monitoring.
 
-### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCAJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
+### Tasks for this week:
 
+| Day | Task | Start date | End date | Reference |
+| --- | --- | --- | --- | --- |
+| 2 | - Reviewed the AWS security model: **shared responsibility model** <br> - **AWS KMS** overview: symmetric key, asymmetric key, alias, key policy <br> - Created a **customer-managed CMK** with alias `fcaj-key`, enabled **annual key rotation** <br> - Used the CMK to encrypt an EBS volume on a new EC2 and verified it in the console | 01/06/2026 | 01/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 3 | - Used the CMK to encrypt an S3 bucket and an RDS snapshot <br> - Practiced granting key usage to an IAM role via CloudFormation <br> - Revoked the grant and confirmed EC2 could no longer decrypt the EBS volume | 02/06/2026 | 02/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 4 | - Enabled **AWS CloudTrail** in a region as a multi-region trail, logs into a dedicated S3 bucket <br> - Enabled **CloudTrail Insights** and **CloudTrail Lake** <br> - Created a **CloudWatch Logs group** for CloudTrail and a metric filter counting `ConsoleLogin` events <br> - Created a **CloudWatch Alarm** sending an SNS notification when a `Root` login occurs | 03/06/2026 | 03/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 5 | - Enabled **GuardDuty** in `ap-southeast-1` with **S3 Protection** and **RDS Protection** <br> - Simulated an attack: ran SSH brute-force from a suspicious IP and waited for the `SSH brute force` finding <br> - Enabled **Security Hub** in the region and linked GuardDuty, IAM Access Analyzer, Inspector into a single dashboard <br> - Reviewed all findings and ranked them by severity | 04/06/2026 | 04/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
+| 6 | - Deployed an ALB in front of the web-tier EC2 <br> - Attached **AWS WAF** to the ALB with a rule blocking requests containing `User-Agent: BadBot` <br> - Added a **rate-based rule** blocking any IP sending more than 2000 requests / 5 minutes <br> - Enabled **Shield Standard** (free) for the ALB <br> - Cleanup: removed test rules, disabled GuardDuty to avoid charges | 05/06/2026 | 05/06/2026 | <https://cloudjourney.awsstudygroup.com/> |
 
-### Week 7 Achievements:
+### Week 7 Outcomes:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+- Solid understanding of the **shared responsibility model** and clear separation between AWS and customer responsibilities.
+- Created and managed a **KMS customer-managed key** with key policy, alias and rotation.
+- Used KMS to encrypt EBS, S3 and RDS snapshot.
+- Deployed CloudTrail multi-region, CloudWatch Logs/Metrics/Alarms with SNS.
+- Enabled **GuardDuty**, simulated SSH brute-force, and read the generated finding.
+- Enabled **Security Hub** and consolidated findings from multiple security services.
+- Attached **WAF** to an ALB with bot-blocking and rate-based rules.
 
-* Successfully created and configured an AWS Free Tier account.
+### Difficulties and lessons learned:
 
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+- WAF cannot be attached directly to an EC2 — there must be an **Application Load Balancer** or **CloudFront** in front. A good lesson in how AWS designs defense in depth.
+- CloudTrail Insights needs a baseline period to detect anomalies, so you have to wait a few days before meaningful alerts appear.
+- GuardDuty takes around 5-15 minutes to flag SSH brute-force, so "real-time" testing requires patience.

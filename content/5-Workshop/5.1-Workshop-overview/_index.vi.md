@@ -1,19 +1,32 @@
 ---
-title : "Giới thiệu"
-date : 2024-01-01 
+title : "Introduction"
+date : 2024-01-01
 weight : 1
 chapter : false
-pre : " <b> 5.1. </b> "
 ---
 
-#### Giới thiệu về VPC Endpoint
+Workshop này hướng dẫn xây dựng đường ống xử lý CV tự động hoàn toàn — từ lúc ứng viên upload CV lên S3, qua các bước xác thực, trích xuất văn bản bằng Amazon Textract, chấm điểm bằng LLM, cho đến khi kết quả được lưu vào DynamoDB và thông báo cho ứng viên.
 
-+ Điểm cuối VPC (endpoint) là thiết bị ảo. Chúng là các thành phần VPC có thể mở rộng theo chiều ngang, dự phòng và có tính sẵn sàng cao. Chúng cho phép giao tiếp giữa tài nguyên điện toán của bạn và dịch vụ AWS mà không gây ra rủi ro về tính sẵn sàng.
-+ Tài nguyên điện toán đang chạy trong VPC có thể truy cập Amazon S3 bằng cách sử dụng điểm cuối Gateway. Interface Endpoint  PrivateLink có thể được sử dụng bởi tài nguyên chạy trong VPC hoặc tại TTDL.
+**Kiến trúc đích:** Queue-based serverless pipeline, tách rời từng giai đoạn bằng SQS để đảm bảo scalability và fault-tolerance. Không có server persistent — toàn bộ Lambda execution, auto-scale theo số lượng CV.
 
-#### Tổng quan về workshop
-Trong workshop này, bạn sẽ sử dụng hai VPC.
-+ **"VPC Cloud"** dành cho các tài nguyên cloud như Gateway endpoint và EC2 instance để kiểm tra.
-+ **"VPC On-Prem"** mô phỏng môi trường truyền thống như nhà máy hoặc trung tâm dữ liệu của công ty. Một EC2 Instance chạy phần mềm StrongSwan VPN đã được triển khai trong "VPC On-prem" và được cấu hình tự động để thiết lập đường hầm VPN Site-to-Site với AWS Transit Gateway. VPN này mô phỏng kết nối từ một vị trí tại TTDL (on-prem) với AWS cloud. Để giảm thiểu chi phí, chỉ một phiên bản VPN được cung cấp để hỗ trợ workshop này. Khi lập kế hoạch kết nối VPN cho production workloads của bạn, AWS khuyên bạn nên sử dụng nhiều thiết bị VPN để có tính sẵn sàng cao.
+**Tổng quan luồng:**
 
-![overview](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
+```
+Ứng viên upload CV
+    ↓ presigned URL PUT
+S3 Quarantine (cách ly file thô)
+    ↓ EventBridge trigger
+Lambda #2: FileValidator (xác thực MIME, dedup, copy)
+    ↓
+S3 Clean (file đã xác thực)
+    ↓ S3 notification trigger
+Lambda #3: Extract (Textract OCR, lưu raw text)
+    ↓ EventBridge (Textract complete)
+Lambda #3b: ExtractComplete (gộp kết quả Textract)
+    ↓ SQS ScoreQueue
+Lambda #4: Score (gọi LLM chấm điểm)
+    ↓ SQS SaveQueue
+Lambda #5: Save&Notify (ghi DynamoDB + gửi email)
+    ↓
+DynamoDB Candidates ← HR Dashboard đọc qua API Gateway
+```

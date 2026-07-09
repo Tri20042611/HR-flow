@@ -1,20 +1,143 @@
 ---
-title : "Access S3 from on-premises"
+title : "Lambda FileValidator & Extract"
 date : 2024-01-01
 weight : 4
 chapter : false
-pre : " <b> 5.4. </b> "
 ---
 
-#### Overview
+### Lambda FileValidator
 
-+ In this section, you will create an Interface endpoint to access Amazon S3 from a simulated on-premises environment. The Interface endpoint will allow you to route to Amazon S3 over a VPN connection from your simulated on-premises environment.
+This Lambda is triggered by EventBridge each time a new file is uploaded to S3 Quarantine.
 
-+ Why using **Interface endpoint**: 
-    + Gateway endpoints only work with resources running in the VPC where they are created. Interface endpoints work with resources running in VPC, and also resources running in on-premises environments. Connectivty from your on-premises environment to the cloud can be provided by AWS Site-to-Site VPN or AWS Direct Connect.
-    + Interface endpoints allow you to connect to services powered by AWS PrivateLink. These services include some AWS services, services hosted by other AWS customers and partners in their own VPCs (referred to as PrivateLink Endpoint Services), and supported AWS Marketplace Partner services. For this workshop, we will focus on connecting to Amazon S3.
+**Processing flow:**
 
-![Interface endpoint architecture](/images/5-Workshop/5.4-S3-onprem/diagram3.png)
+```
+S3 ObjectCreated Event
+    ↓
+_head_object → get metadata (job_id, channel)
+    ↓
+get_object → read file bytes
+    ↓
+_detect_mime_by_magic → check magic bytes (prevent extension spoofing)
+    ↓
+Check size ≤ 5MB
+    ↓
+SHA-256 hash → query DynamoDB GSI sha256_hash-index
+    ↓
+PASS: copy to Clean bucket + delete from Quarantine
+FAIL: log + SNS alert HR (file kept in Quarantine 7 days)
+```
 
+**Key code — MIME checking via magic bytes:**
 
+```python
+# src/file_validator/app.py
 
+MAGIC_BYTES = {
+    b'%PDF': 'application/pdf',
+    b'PK\x03\x04': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',  # .docx
+    b'\xd0\xcf\x11\xe0': 'application/msword',  # .doc (Compound Document)
+}
+
+def _detect_mime_by_magic(file_bytes: bytes) -> str | None:
+    """Magic bytes don't trust Content-Type header — prevents fake extension."""
+    stripped = file_bytes.lstrip(b' \t\r\n\x00\x0b\x0c\xef\xbb\xbf')
+    for magic, mime in MAGIC_BYTES.items():
+        if stripped[:len(magic)] == magic:
+            return mime
+    return None
+```
+
+**Important:** Use magic bytes instead of `Content-Type` header because headers can be spoofed. Example: `.exe` file renamed to `.pdf` still has header `application/pdf` but magic bytes will reveal it's not a real PDF.
+
+**Code — deduplication via SHA-256:**
+
+```python
+# src/file_validator/app.py
+
+def _is_duplicate(sha256_hash: str) -> bool:
+    """Query DynamoDB GSI on sha256_hash to detect duplicate files."""
+    table = dynamodb.Table(CANDIDATES_TABLE)
+    response = table.query(
+        IndexName='sha256_hash-index',
+        KeyConditionExpression='sha256_hash = :h',
+        ExpressionAttributeValues={':h': sha256_hash},
+        Limit=1
+    )
+    return len(response.get('Items', [])) > 0
+```
+
+**Validation fail → SNS alert HR:**
+
+```python
+def _handle_validation_fail(bucket_name, object_key, job_id, reason):
+    """File failed validation → alert HR, keep in Quarantine."""
+    _send_hr_alert(
+        subject='[HireFlow] CV file rejected',
+        message=f'Reason: {reason}\nKey: {object_key}\nJob ID: {job_id}'
+    )
+    # File stays in Quarantine — lifecycle 7 days auto-delete
+```
+
+### Lambda Extract
+
+Lambda is triggered by S3 notification each time a file lands in Clean bucket. Synchronous processing: start Textract job → poll until complete → save raw text → send SQS.
+
+**Code — Textract async polling:**
+
+```python
+# src/extract/app.py
+
+TEXTRACT_MAX_POLLS = 60       # 60 × 5s = 5 minutes timeout
+TEXTRACT_POLL_INTERVAL = 5    # seconds
+
+def _run_textract(bucket: str, key: str) -> str:
+    # Step 1: Start async job
+    response = textract.start_document_text_detection(
+        DocumentLocation={'S3Object': {'Bucket': bucket, 'Name': key}}
+    )
+    job_id = response['JobId']
+
+    # Step 2: Poll until SUCCEEDED or FAILED
+    for attempt in range(TEXTRACT_MAX_POLLS):
+        time.sleep(TEXTRACT_POLL_INTERVAL)
+        result = textract.get_document_text_detection(JobId=job_id)
+        status = result['JobStatus']
+
+        if status == 'SUCCEEDED':
+            return _extract_text_from_textract(job_id)
+        if status == 'FAILED':
+            raise RuntimeError(f'Textract FAILED: {result.get("StatusMessage")}')
+
+    raise TimeoutError(f'Textract timeout after {TEXTRACT_MAX_POLLS * TEXTRACT_POLL_INTERVAL}s')
+```
+
+**Idempotency check — avoid duplicate processing:**
+
+```python
+# src/extract/app.py
+
+def _process_file(clean_bucket: str, s3_key: str):
+    # Check RIGHT AWAY — avoid duplicate when Lambda re-triggers
+    existing = _check_already_processed(s3_key)
+    if existing:
+        print(f'[WARN] File already processed — candidate_id: {existing}')
+        return
+
+    # ... continue normal processing
+```
+
+**Text length validation — detect low-quality scanned PDF:**
+
+```python
+MIN_TEXT_LENGTH = 200  # characters
+
+if len(raw_text.strip()) < MIN_TEXT_LENGTH:
+    _update_candidate_status(candidate_id, 'extraction_failed')
+    _send_hr_alert(
+        subject='[HireFlow] CV content unreadable',
+        message=f'Textract extracted < {MIN_TEXT_LENGTH} characters. '
+                f'Possibly a low-quality scanned PDF.'
+    )
+    return
+```

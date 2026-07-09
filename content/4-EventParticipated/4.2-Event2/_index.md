@@ -6,121 +6,66 @@ chapter: false
 pre: " <b> 4.2. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy it verbatim** into your report, including this warning.
-{{% /notice %}}
+# AWS Student Builder Group - Kiro Spec-Driven Development
 
-# Summary Report: “GenAI-powered App-DB Modernization workshop”
+### Event Purpose
 
-### Event Objectives
+Presented by **Danh Hoàng Hiếu Nghị**, this session focuses on how Kiro supports spec-first development, helping improve team collaboration, make better architecture decisions, and leverage AI more effectively in software development. Instead of having AI generate code haphazardly, Kiro helps transform requirements into specifications, system designs, and clearer deployment plans, resulting in more reliable code.
 
-- Share best practices in modern application design
-- Introduce Domain-Driven Design (DDD) and event-driven architecture
-- Provide guidance on selecting the right compute services
-- Present AI tools to support the development lifecycle
+### Target Audience
 
-### Speakers
+The event is suitable for students, software engineers, AI developers, cloud builders, and those interested in modern software development workflows.
 
-- **Jignesh Shah** – Director, Open Source Databases
-- **Erica Liu** – Sr. GTM Specialist, AppMod
-- **Fabrianne Effendi** – Assc. Specialist SA, Serverless Amazon Web Services
+### Main Content
 
-### Key Highlights
+- **Introduction to Spec-Driven Development** and why this approach is becoming increasingly important
+- **Overview of Kiro** and its role in AI-assisted software engineering
+- **How to transform requirements** into specifications, system architecture and deployment plans
+- **Why specification-first workflow** can improve software quality and collaboration
+- **Practical discussion** on how to use AI coding assistants more effectively
+- **Q&A and discussion** with the community
 
-#### Identifying the drawbacks of legacy application architecture
+### What I Learned
 
-- Long product release cycles → Lost revenue/missed opportunities  
-- Inefficient operations → Reduced productivity, higher costs  
-- Non-compliance with security regulations → Security breaches, loss of reputation  
+#### Spec-Driven Development
 
-#### Transitioning to modern application architecture – Microservices
+- Why spec-first approach is increasingly important in modern software development
+- Transform business requirements into clear, verifiable specifications
+- System design and deployment planning before writing code
 
-Migrating to a modular system — each function is an **independent service** communicating via **events**, built on three core pillars:
+#### Kiro in AI-Assisted Software Engineering
 
-- **Queue Management**: Handle asynchronous tasks  
-- **Caching Strategy**: Optimize performance  
-- **Message Handling**: Flexible inter-service communication  
+- Steering Files, Hooks, MCP - Kiro's standout features
+- Spec-driven workflow helps teams collaborate more effectively
+- Make better architecture decisions with AI
 
-#### Domain-Driven Design (DDD)
+#### Using AI Coding Assistant Effectively
 
-- **Four-step method**: Identify domain events → arrange timeline → identify actors → define bounded contexts  
-- **Bookstore case study**: Demonstrates real-world DDD application  
-- **Context mapping**: 7 patterns for integrating bounded contexts  
+- Avoid vibe coding - understand what AI generates
+- Combine AI with clear specifications for best results
+- Maintain code quality when using AI generation
 
-#### Event-Driven Architecture
+### Application to Work
 
-- **3 integration patterns**: Publish/Subscribe, Point-to-point, Streaming  
-- **Benefits**: Loose coupling, scalability, resilience  
-- **Sync vs async comparison**: Understanding the trade-offs  
+- Apply spec-first approach to personal projects
+- Use Kiro or similar tools to improve workflow
+- Write specifications before coding to reduce ambiguity
+- Leverage AI assistant responsibly and effectively
 
-#### Compute Evolution
+### Experience at the Event
 
-- **Shared Responsibility Model**: EC2 → ECS → Fargate → Lambda  
-- **Serverless benefits**: No server management, auto-scaling, pay-for-value  
-- **Functions vs Containers**: Criteria for appropriate choice  
+Participating in **"Kiro Spec-Driven Development"** was a valuable experience, helping me understand the spec-first approach and how Kiro supports modern software development workflows. Some highlights:
 
-#### Amazon Q Developer
+- Understood the importance of writing specifications before coding
+- Learned about Kiro features like Steering Files, Hooks, MCP
+- Learned how to collaborate with AI effectively, avoiding over-reliance
+- Connected with the AWS Student Builder community
 
-- **SDLC automation**: From planning to maintenance  
-- **Code transformation**: Java upgrade, .NET modernization  
-- **AWS Transform agents**: VMware, Mainframe, .NET migration  
+### Some Photos from the Event
 
-### Key Takeaways
+![Event 2 Photo](/images/4-EventParticipated/4.2-Event2/event2_photo.png)
 
-#### Design Mindset
+### Results Achieved
 
-- **Business-first approach**: Always start from the business domain, not the technology  
-- **Ubiquitous language**: Importance of a shared vocabulary between business and tech teams  
-- **Bounded contexts**: Identifying and managing complexity in large systems  
+- After the session, I started using Kiro for learning and work, and wrote a blog about Kiro at blog 1
 
-#### Technical Architecture
-
-- **Event storming technique**: Practical method for modeling business processes  
-- Use **event-driven communication** instead of synchronous calls  
-- **Integration patterns**: When to use sync, async, pub/sub, streaming  
-- **Compute spectrum**: Criteria for choosing between VM, containers, and serverless  
-
-#### Modernization Strategy
-
-- **Phased approach**: No rushing — follow a clear roadmap  
-- **7Rs framework**: Multiple modernization paths depending on the application  
-- **ROI measurement**: Cost reduction + business agility  
-
-### Applying to Work
-
-- **Apply DDD** to current projects: Event storming sessions with business teams  
-- **Refactor microservices**: Use bounded contexts to define service boundaries  
-- **Implement event-driven patterns**: Replace some sync calls with async messaging  
-- **Adopt serverless**: Pilot AWS Lambda for suitable use cases  
-- **Try Amazon Q Developer**: Integrate into the dev workflow to boost productivity  
-
-### Event Experience
-
-Attending the **“GenAI-powered App-DB Modernization”** workshop was extremely valuable, giving me a comprehensive view of modernizing applications and databases using advanced methods and tools. Key experiences included:
-
-#### Learning from highly skilled speakers
-- Experts from AWS and major tech organizations shared **best practices** in modern application design.  
-- Through real-world case studies, I gained a deeper understanding of applying **DDD** and **Event-Driven Architecture** to large projects.  
-
-#### Hands-on technical exposure
-- Participating in **event storming** sessions helped me visualize how to **model business processes** into domain events.  
-- Learned how to **split microservices** and define **bounded contexts** to manage large-system complexity.  
-- Understood trade-offs between **synchronous and asynchronous communication** and integration patterns like **pub/sub, point-to-point, streaming**.  
-
-#### Leveraging modern tools
-- Explored **Amazon Q Developer**, an AI tool for SDLC support from planning to maintenance.  
-- Learned to **automate code transformation** and pilot serverless with **AWS Lambda** to improve productivity.  
-
-#### Networking and discussions
-- The workshop offered opportunities to exchange ideas with experts, peers, and business teams, enhancing the **ubiquitous language** between business and tech.  
-- Real-world examples reinforced the importance of the **business-first approach** rather than focusing solely on technology.  
-
-#### Lessons learned
-- Applying DDD and event-driven patterns reduces **coupling** while improving **scalability** and **resilience**.  
-- Modernization requires a **phased approach** with **ROI measurement**; rushing the process can be risky.  
-- AI tools like Amazon Q Developer can significantly **boost productivity** when integrated into the current workflow.  
-
-#### Some event photos
-*Add your event photos here*  
-
-> Overall, the event not only provided technical knowledge but also helped me reshape my thinking about application design, system modernization, and cross-team collaboration.

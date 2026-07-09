@@ -1,59 +1,37 @@
 ---
 title: "Worklog Tuần 5"
-date: 2024-01-01
-weight: 1
+date: 2026-05-18
+weight: 5
 chapter: false
 pre: " <b> 1.5. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
-
 
 ### Mục tiêu tuần 5:
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+- Triển khai **Amazon RDS** (Multi-AZ, Read Replica, backup, parameter group) cho bài toán OLTP quen thuộc.
+- Làm quen **Amazon DynamoDB**: partition key, sort key, GSI, throughput và auto scaling.
+- Đặt DB trong private subnet, bảo mật bằng Security Group và mã hóa at-rest & in-transit.
+
+> Tuần này lịch khá gọn với 3 buổi, mình dành 2 buổi cho RDS và 1 buổi cho DynamoDB. Giữa tuần có 1 buổi đọc whitepaper về Aurora để chuẩn bị cho đồ án cuối khóa.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+| --- | --- | --- | --- | --- |
+| 2 | - Tổng quan managed database trên AWS: RDS, Aurora, DynamoDB, ElastiCache, Neptune, Redshift <br> - Tạo RDS MySQL db.t3.micro đầu tiên, đặt trong private subnet của VPC đã dựng tuần 4 <br> - Cấu hình Security Group chỉ cho phép EC2 app tier kết nối vào port 3306 <br> - Từ EC2 app tier dùng `mysql client` kết nối thành công, tạo schema và insert dữ liệu mẫu | 18/05/2026 | 18/05/2026 | <https://000005.awsstudygroup.com/> |
+| 4 | - Bật **Multi-AZ Deployment** để tự động failover <br> - Bật **automated backup** giữa 7 ngày, kiểm tra trong AWS Backup <br> - Tạo **Read Replica** ở region khác (cross-region) phục vụ báo cáo <br> - Restore một **DB snapshot** ra một DB instance mới để kiểm tra khả năng khôi phục <br> - Tạo custom **DB Parameter Group**, đổi `max_connections` và áp dụng | 20/05/2026 | 20/05/2026 | <https://000005.awsstudygroup.com/> |
+| 6 | - Tổng quan DynamoDB: NoSQL key-value, partition key, sort key, GSI/LSI <br> - Tạo bảng `Users` với partition key `userId` và sort key `createdAt` <br> - Thực hành CRUD với `aws dynamodb` CLI: `put-item`, `get-item`, `update-item`, `query`, `scan` <br> - Bật **DynamoDB Streams** + Lambda trigger để ghi log mỗi lần có thay đổi vào S3 <br> - Cấu hình **auto scaling** cho read/write capacity, mô phỏng tăng tải để xem capacity scale lên | 22/05/2026 | 22/05/2026 | <https://000078.awsstudygroup.com/> |
 
 ### Kết quả đạt được tuần 5:
 
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+- Phân biệt được các loại managed database trên AWS và chọn đúng cho từng bài toán (RDS cho OLTP quan hệ, DynamoDB cho NoSQL scale lớn, ElastiCache cho cache...).
+- Triển khai RDS MySQL ở private subnet, kết nối qua EC2 app tier thành công.
+- Bật được **Multi-AZ**, **Read Replica cross-region**, **automated backup** và biết restore từ snapshot.
+- Tạo và quản lý **DynamoDB table**, dùng CLI thao tác CRUD, hiểu partition key và sort key ảnh hưởng đến query pattern.
+- Kết nối **DynamoDB Streams** với Lambda và S3 để làm kho lưu trữ sự kiện lâu dài.
 
-* Đã tạo và cấu hình AWS Free Tier account thành công.
+### Khó khăn và bài học:
 
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+- Lúc đầu đặt RDS ở public subnet, sau khi mentor review nhắc mình mới chuyển về private subnet và chỉ mở SG cho app tier. Đây là best practice mình sẽ áp dụng xuyên suốt.
+- DynamoDB `Scan` rất tốn chi phí và tài nguyên, phải thiết kế partition key sao cho phần lớn query dùng `Query` thay vì `Scan`.
+- Multi-AZ cần subnet group trải rộng ít nhất 2 AZ, mình quên tạo subnet group trước nên RDS không cho bật Multi-AZ ngay lần đầu.

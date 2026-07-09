@@ -1,59 +1,38 @@
 ---
 title: "Worklog Tuần 8"
-date: 2024-01-01
-weight: 1
+date: 2026-06-08
+weight: 8
 chapter: false
 pre: " <b> 1.8. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
-
 
 ### Mục tiêu tuần 8:
 
-* Kết nối, làm quen với các thành viên trong First Cloud AI Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+- Triển khai ứng dụng **serverless** với Lambda + API Gateway + DynamoDB, hiểu cơ chế event-driven.
+- Làm quen **AWS CloudFormation**: viết template, deploy, update và rollback stack.
+- Tổng kết toàn bộ 8 tuần thực tập, xác định hướng cho đồ án cuối khóa.
+
+> Tuần cuối của giai đoạn nền tảng, mình chỉ có 3 buổi làm việc vì dành thời gian chuẩn bị đề xuất đồ án và tham gia buổi chia sẻ cuối khóa với mentor.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCAJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu |
+| --- | --- | --- | --- | --- |
+| 2 | - Tổng quan **AWS Lambda**: function, trigger, execution role, runtime <br> - Viết function Lambda bằng Python 3.12 trả về JSON đơn giản <br> - Tạo **API Gateway REST API** trỏ vào Lambda, test bằng `curl` <br> - Kết nối Lambda với **DynamoDB Streams** đã setup từ tuần 5, ghi mỗi thay đổi vào S3 | 08/06/2026 | 08/06/2026 | <https://000078.awsstudygroup.com/vi/2-resize-image-function/> |
+| 4 | - Tìm hiểu **AWS CloudFormation**: template, stack, resource, parameter, output <br> - Viết template triển khai VPC 2-tier (public + private subnet, IGW, route table) <br> - Deploy stack, kiểm tra resource được tạo đúng <br> - Update stack (đổi CIDR), quan sát CloudFormation sửa theo changeset | 10/06/2026 | 10/06/2026 | <https://docs.aws.amazon.com/cloudformation/> |
+| 6 | - Viết template CloudFormation triển khai Lambda + API Gateway + DynamoDB theo kiến trúc serverless tuần này <br> - Xóa resource tạo thủ công, deploy lại bằng stack để chứng minh tính tái sử dụng <br> - Thử cố tình tạo lỗi (conflict tên S3 bucket) để quan sát CloudFormation **rollback** <br> - Buổi tổng kết với mentor, ghi nhận feedback cho đồ án cuối khóa | 12/06/2026 | 12/06/2026 | <https://docs.aws.amazon.com/cloudformation/> |
 
 ### Kết quả đạt được tuần 8:
 
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+- Tạo và deploy được Lambda function, biết cách gắn **execution role** đúng nguyên tắc least privilege.
+- Kết nối API Gateway + Lambda + DynamoDB thành một **REST API serverless** hoàn chỉnh, test thành công qua `curl`.
+- Tái sử dụng **DynamoDB Streams** + Lambda + S3 từ tuần 5 để xây dựng luồng event-driven.
+- Viết được template **CloudFormation** triển khai VPC 2-tier, nắm được cơ chế stack, parameter, output.
+- Quan sát được CloudFormation **rollback** khi có lỗi, hiểu được lý do nên dùng IaC thay vì click tay trong console.
+- Hoàn thành **vòng nền tảng 8 tuần**, sẵn sàng cho 4 tuần tiếp theo tập trung vào đồ án cuối khóa.
 
-* Đã tạo và cấu hình AWS Free Tier account thành công.
+### Khó khăn và bài học:
 
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+- Lambda execution role mặc định không có quyền ghi vào CloudWatch Logs ở account mới, mình phải tự gắn policy `AWSLambdaBasicExecutionRole`.
+- API Gateway cần **deploy stage** mới có URL gọi được, đây là bước dễ quên vì console không cảnh báo.
+- CloudFormation rollback chỉ áp dụng khi bật rollback trong stack option; nếu không, resource đã tạo trước đó sẽ giữ lại gây trạng thái "nửa vời" - mình đã rơi vào tình huống này và mất 30 phút dọn dẹp tay.

@@ -1,59 +1,104 @@
 ---
-title : "Test the Interface Endpoint"
+title : "Validation & Analysis"
 date : 2024-01-01
-weight : 3
+weight : 6
 chapter : false
-pre : " <b> 5.4.3 </b> "
 ---
 
-#### Get the regional DNS name of S3 interface endpoint
-1. From the Amazon VPC menu, choose Endpoints.
+## 7. Validation & Analysis
 
-2. Click the name of newly created endpoint: s3-interface-endpoint. Click details and save the regional DNS name of the endpoint (the first one) to your text-editor for later use. 
+### 7.1 End-to-end test
 
-![dns name](/images/5-Workshop/5.4-S3-onprem/dns.png)
+**Upload a real CV and monitor the pipeline:**
 
+```bash
+# 1. Get presigned URL (or upload directly if frontend is ready)
+# 2. Upload test CV to Quarantine bucket
+aws s3 cp test-cv.pdf s3://hireflow-quarantine-<ACCOUNT_ID>/web/test-cv.pdf
 
-#### Connect to EC2 instance in "VPC On-prem"
+# 3. Monitor FileValidator Lambda logs
+aws logs tail /aws/lambda/hireflow-file-validator --follow --format short
 
-1. Navigate to **Session manager** by typing "session manager" in the search box 
+# 4. Check file copied to Clean bucket
+aws s3 ls s3://hireflow-clean-<ACCOUNT_ID>/
 
-2. Click **Start Session**, and select the EC2 instance named **Test-Interface-Endpoint**. This EC2 instance is running in "VPC On-prem" and will be used to test connectivty to Amazon S3 through the Interface endpoint we just created. Session Manager will open a new browser tab with a shell prompt: **sh-4.2 $**
+# 5. Monitor Extract Lambda logs
+aws logs tail /aws/lambda/hireflow-extract --follow --format short
 
-![Start session](/images/5-Workshop/5.4-S3-onprem/start-session.png)
+# 6. Check OCR text saved
+aws s3 ls s3://hireflow-clean-<ACCOUNT_ID>/ocr/
 
-3. Change to the ssm-user's home directory with command "cd ~"
+# 7. Monitor Score Lambda logs
+aws logs tail /aws/lambda/hireflow-score --follow --format short
 
-4. Create a file named testfile2.xyz
+# 8. Check results in DynamoDB
+aws dynamodb scan \
+  --table-name hireflow-candidates \
+  --filter-expression "score_total > :zero" \
+  --expression-attribute-values '{"N": {"N": "0"}}' \
+  --output json
 ```
-fallocate -l 1G testfile2.xyz
+
+**Expected output after pipeline completes:**
+
+```json
+{
+  "candidate_id": "uuid-...",
+  "job_id": "job-001",
+  "score_total": 75.5,
+  "score_detail": {
+    "experience": 80.0,
+    "skills": 70.0,
+    "education": 85.0,
+    "soft_skill": 70.0
+  },
+  "summary": "Candidate has 5 years backend experience, proficient in Python and AWS. ...",
+  "flags": [],
+  "status": "reviewing",
+  "confidence": "high"
+}
 ```
 
-![user](/images/5-Workshop/5.4-S3-onprem/cli1.png)
+### 7.2 CloudWatch Metrics analysis
 
+Check pipeline performance:
 
-5. Copy file to the same S3 bucket we created in section 3.2
+```bash
+# Lambda invocation count and error rate
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/Lambda \
+  --metric-name Invocations \
+  --dimensions Name=FunctionName,Value=hireflow-file-validator \
+  --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300 \
+  --statistics Sum
 
+# SQS queue depth (messages waiting)
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/SQS \
+  --metric-name ApproximateNumberOfMessagesVisible \
+  --dimensions Name=QueueName,Value=hireflow-score-queue \
+  --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300 \
+  --statistics Average
 ```
-aws s3 cp --endpoint-url https://bucket.<Regional-DNS-Name> testfile2.xyz s3://<your-bucket-name>
-``` 
-+ This command requires the --endpoint-url parameter, because you need to use the endpoint-specific DNS name to access S3 using an Interface endpoint.
-+ Do not include the leading ' * ' when copying/pasting the regional DNS name.
-+ Provide your S3 bucket name created earlier
 
-![copy file](/images/5-Workshop/5.4-S3-onprem/cli2.png)
+### 7.3 DLQ inspection (dead-letter queue)
 
+Check for failed messages:
 
-Now the file has been added to your S3 bucket. Let check your S3 bucket in the next step.
+```bash
+# Number of messages in DLQ
+aws sqs get-queue-attributes \
+  --queue-url https://sqs.ap-southeast-2.amazonaws.com/<ACCOUNT_ID>/hireflow-score-dlq \
+  --attribute-names ApproximateNumberOfMessages
 
-#### Check Object in S3 bucket
+# Read message from DLQ for debugging
+aws sqs receive-message \
+  --queue-url https://sqs.ap-southeast-2.amazonaws.com/<ACCOUNT_ID>/hireflow-score-dlq \
+  --max-number-of-messages 1
 
-1. Navigate to S3 console
-2. Click Buckets
-3. Click the name of your bucket and you will see testfile2.xyz has been added to your bucket
-
-![check bucket](/images/5-Workshop/5.4-S3-onprem/check-bucket.png)
-
-
-
-
+# CloudWatch alarm is configured — HR will receive email if DLQ has messages
+```

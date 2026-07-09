@@ -5,27 +5,24 @@ weight: 5
 chapter: false
 pre: " <b> 5. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# Secure Hybrid Access to S3 using VPC Endpoints
+# Deploy Backend - Automated CV Processing Pipeline
+
+![Workshop](/images/5-Workshop/workshop-header.png)
 
 #### Overview
 
-**AWS PrivateLink** provides private connectivity to AWS services from VPCs and your on-premises networks, without exposing your traffic to the Public Internet.
+This workshop guides you through building a fully automated CV processing pipeline using AWS Serverless services. From candidate uploading CV to S3, through validation, text extraction via Amazon Textract, LLM-based scoring, to storing results in DynamoDB and notifying the candidate.
 
-In this lab, you will learn how to create, configure, and test VPC endpoints that enable your workloads to reach AWS services without traversing the Public Internet.
-
-You will create two types of endpoints to access Amazon S3: a Gateway VPC endpoint, and an Interface VPC endpoint. These two types of VPC endpoints offer different benefits depending on if you are accessing Amazon S3 from the cloud or your on-premises location
-+ **Gateway** - Create a gateway endpoint to send traffic to Amazon S3 or DynamoDB using private IP addresses.You route traffic from your VPC to the gateway endpoint using route tables.
-+ **Interface** - Create an interface endpoint to send traffic to endpoint services that use a Network Load Balancer to distribute traffic. Traffic destined for the endpoint service is resolved using DNS.
+**Architecture:** Queue-based serverless pipeline, separating each stage with SQS for scalability and fault-tolerance. No persistent servers — all Lambda execution, auto-scaling based on CV volume.
 
 #### Content
 
-1. [Workshop overview](5.1-Workshop-overview)
-2. [Prerequiste](5.2-Prerequiste/)
-3. [Access S3 from VPC](5.3-S3-vpc/)
-4. [Access S3 from On-premises](5.4-S3-onprem/)
-5. [VPC Endpoint Policies (Bonus)](5.5-Policy/)
-6. [Clean up](5.6-Cleanup/)
+1. [Workshop overview](5.1-Workshop-overview/)
+2. [Prerequisites](5.2-Prerequiste/)
+3. [Project Structure & SAM Deploy](5.3-S3-vpc/)
+4. [Lambda FileValidator & Extract](5.4-S3-onprem/)
+5. [Lambda Score & Save&Notify](5.5-Policy/)
+6. [Validation & Cleanup](5.6-Cleanup/)
+7. [Challenges & Future](5.7-Challenges/)
+8. [Product Demonstration](5.8-ThucNghiepSanPham/)

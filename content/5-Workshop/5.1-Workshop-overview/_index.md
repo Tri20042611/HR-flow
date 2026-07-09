@@ -1,18 +1,32 @@
 ---
 title : "Introduction"
-date : 2024-01-01 
-weight : 1 
+date : 2024-01-01
+weight : 1
 chapter : false
-pre : " <b> 5.1. </b> "
 ---
 
-#### VPC endpoints
-+ **VPC endpoints** are virtual devices. They are horizontally scaled, redundant, and highly available VPC components. They allow communication between your compute resources and AWS services without imposing availability risks.
-+ Compute resources running in VPC can access  **Amazon S3**  using a Gateway endpoint. PrivateLink interface endpoints can be used by compute resources running in VPC or on-premises.
+This workshop guides you through building a fully automated CV processing pipeline — from candidate uploading CV to S3, through validation, text extraction via Amazon Textract, LLM-based scoring, to storing results in DynamoDB and notifying the candidate.
 
-#### Workshop overview
-In this workshop, you will use two VPCs. 
-+ **"VPC Cloud"** is for cloud resources such as a  **Gateway endpoint** and an EC2 instance to test with. 
-+ **"VPC On-Prem"** simulates an on-premises environment such as a factory or corporate datacenter. An EC2 instance running strongSwan VPN software has been deployed in "VPC On-prem" and automatically configured to establish a Site-to-Site VPN tunnel with AWS Transit Gateway. This VPN simulates connectivity from an on-premises location to the AWS cloud. To minimize costs, only one VPN instance is provisioned to support this workshop. When planning VPN connectivity for your production workloads, AWS recommends using multiple VPN devices for high availability.
+**Target architecture:** Queue-based serverless pipeline, separating each stage with SQS for scalability and fault-tolerance. No persistent servers — all Lambda execution, auto-scaling based on CV volume.
 
-![overview](/images/5-Workshop/5.1-Workshop-overview/diagram1.png)
+**Flow overview:**
+
+```
+Candidate uploads CV
+    ↓ presigned URL PUT
+S3 Quarantine (raw file isolation)
+    ↓ EventBridge trigger
+Lambda #2: FileValidator (MIME validation, dedup, copy)
+    ↓
+S3 Clean (validated files)
+    ↓ S3 notification trigger
+Lambda #3: Extract (Textract OCR, save raw text)
+    ↓ EventBridge (Textract complete)
+Lambda #3b: ExtractComplete (merge Textract results)
+    ↓ SQS ScoreQueue
+Lambda #4: Score (LLM scoring)
+    ↓ SQS SaveQueue
+Lambda #5: Save&Notify (write DynamoDB + send email)
+    ↓
+DynamoDB Candidates ← HR Dashboard reads via API Gateway
+```

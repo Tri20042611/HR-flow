@@ -82,6 +82,26 @@ Dự án gồm 4 giai đoạn chính, mỗi giai đoạn có sản phẩm bàn g
 
 Dự án chạy xuyên suốt 12 tuần, align với lịch thực tập.
 
+**Tuần 1–8: Giai đoạn học tập**
+
+- **Tuần 1:** Làm quen với AWS — EC2, IAM, CLI, Budget alerts
+- **Tuần 2:** Deep dive EC2 & EBS, Session Manager, Linux cơ bản
+- **Tuần 3:** Amazon S3 — Versioning, Lifecycle, Replication, Block Public Access, pre-signed URL, SSE-KMS
+- **Tuần 4:** Amazon VPC — CIDR, public/private subnet, IGW, NAT, SG vs NACL, VPC Endpoint
+- **Tuần 5:** RDS Multi-AZ + Read Replica và DynamoDB partition/sort key, GSI, Streams
+- **Tuần 6:** IAM chuyên sâu — least privilege, MFA, IAM Role, Access Analyzer, Identity Center SSO
+- **Tuần 7:** KMS, GuardDuty, Security Hub, WAF, CloudTrail, CloudWatch
+- **Tuần 8:** Serverless với Lambda + API Gateway + DynamoDB và CloudFormation IaC
+
+**Tuần 9–12: Giai đoạn phát triển dự án**
+
+| Tuần | Mốc | Sản phẩm chính |
+|------|------|----------------|
+| **Tuần 9** | Khởi động & Kiến trúc | - Làm quen Kiro IDE (AI code generation) <br> - Học Amazon SQS (standard queue, visibility timeout, DLQ) <br> - Brainstorm và chốt kiến trúc HireFlow AI <br> - Ánh xạ mô hình SQS vào pipeline extract→score→save |
+| **Tuần 10** | Cài đặt Backend với SAM | - Khởi tạo project HireFlow bằng SAM CLI (`hireflow-sam/`) <br> - Deploy SAM stack: 6 S3 bucket, 2 DynamoDB table, 2 SQS + 2 DLQ <br> - Viết Lambda `file-validator` (kiểm tra MIME, SHA-256 dedup) <br> - Tích hợp Amazon Textract để OCR CV <br> - Pipeline: Upload → Validate → Extract |
+| **Tuần 11** | Hoàn thiện Pipeline | - Hoàn thành pipeline async OCR → score → save <br> - Tích hợp LLM scoring qua OpenAI-compatible endpoint <br> - Cấu hình Amazon SES gửi email xác nhận ứng viên <br> - Setup DLQ cho cả 2 SQS queue với retry logic <br> - Luồng trạng thái hoàn chỉnh: uploaded → extracting → extracted → scoring → scored → saved |
+| **Tuần 12** | Frontend & Demo | - Build Candidate SPA + HR Dashboard trên S3 static website <br> - Demo end-to-end: 3–5 CV → validate → OCR → LLM score → DynamoDB → email <br> - Trình bày kiến trúc HireFlow qua cloudflared tunnel <br> - Nộp báo cáo worklog cuối kỳ |
+
 ### 6. Ước tính ngân sách
 
 **Chi phí hạ tầng (ước tính cho 200 CV/ngày)**

@@ -80,6 +80,26 @@ The project has 4 main phases, each with clear deliverables:
 
 Project runs across 12 weeks aligned with the internship period.
 
+**Weeks 1–8: Learning Phase**
+
+- **Week 1:** Getting started with AWS — EC2, IAM, CLI, Budget alerts
+- **Week 2:** Deep dive EC2 & EBS, Session Manager, Basic Linux
+- **Week 3:** Amazon S3 — Versioning, Lifecycle, Replication, Block Public Access, pre-signed URL, SSE-KMS
+- **Week 4:** Amazon VPC — CIDR, public/private subnet, IGW, NAT, SG vs NACL, VPC Endpoint
+- **Week 5:** RDS Multi-AZ + Read Replica and DynamoDB partition/sort key, GSI, Streams
+- **Week 6:** IAM Deep dive — least privilege, MFA, IAM Role, Access Analyzer, Identity Center SSO
+- **Week 7:** KMS, GuardDuty, Security Hub, WAF, CloudTrail, CloudWatch
+- **Week 8:** Serverless with Lambda + API Gateway + DynamoDB and CloudFormation IaC
+
+**Weeks 9–12: Project Development**
+
+| Week | Milestone | Key Deliverables |
+|------|-----------|------------------|
+| **Week 9** | Project Initiation & Architecture | - Familiarized with Kiro IDE (AI code generation) <br> - Learned Amazon SQS (standard queue, visibility timeout, DLQ) <br> - Brainstormed and locked HireFlow AI architecture <br> - Mapped SQS pattern into extract→score→save pipeline |
+| **Week 10** | SAM Backend Setup | - Initialized HireFlow project with SAM CLI (`hireflow-sam/`) <br> - Deployed SAM stack: 6 S3 buckets, 2 DynamoDB tables, 2 SQS + 2 DLQ <br> - Built Lambda `file-validator` (MIME check, SHA-256 dedup) <br> - Integrated Amazon Textract for CV OCR <br> - Pipeline: Upload → Validate → Extract |
+| **Week 11** | Pipeline Completion | - Completed async OCR → score → save pipeline <br> - Integrated LLM scoring via OpenAI-compatible endpoint <br> - Configured Amazon SES for candidate confirmation emails <br> - Set up DLQ for both SQS queues with retry logic <br> - Complete status flow: uploaded → extracting → extracted → scoring → scored → saved |
+| **Week 12** | Frontend & Demo | - Built Candidate SPA + HR Dashboard SPA on S3 static website <br> - End-to-end demo: 3–5 CVs → validate → OCR → LLM score → DynamoDB → email <br> - Presented HireFlow architecture via cloudflared tunnel <br> - Submitted final worklog report |
+
 ### 6. Budget Estimation
 
 **Infrastructure Costs (estimated for 200 CVs/day)**
